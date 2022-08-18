@@ -54,9 +54,9 @@ typedef struct {
 /** The Working structure for the UDP */
 typedef struct {
     int32  sockId;                  /**< -- Socket Id                   */
-    struct sockaddr_in sockAddr;    /**< -- Socket Addr (Working)       */
-    struct sockaddr_in srcAddr;     /**< -- Source Socket Address (In)  */
-    struct sockaddr_in destAddr;    /**< -- Dest. Socket Address (Out)  */
+    OS_SockAddr_t sockAddr;    /**< -- Socket Addr (Working)       */
+    OS_SockAddr_t srcAddr;     /**< -- Source Socket Address (In)  */
+    OS_SockAddr_t destAddr;    /**< -- Dest. Socket Address (Out)  */
 } IO_TransUdp_t;
 
 /* Prototypes */
