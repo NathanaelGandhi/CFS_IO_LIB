@@ -786,8 +786,8 @@ end_of_function:
  *******************************************************************************/
 static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
 {
-    uint8                   msgHdr[6];
-    uint16                  lengthToCopy;
+    CFE_SB_Buffer_t        *msgHdr;
+    size_t                  lengthToCopy;
     uint16                  lengthToEnd;
     bool                    setHeader;
     uint16                  freeOctets;
@@ -814,11 +814,15 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
         {
             CFE_PSP_MemCpy((void *)msgHdr, (void *)pOverflow->dataStart, lengthToEnd);
             CFE_PSP_MemCpy((void *)(msgHdr + lengthToEnd), (void *)pOverflow->buffer, 6 - lengthToEnd);
-            lengthToCopy = CFE_SB_GetTotalMsgLength((CFE_SB_Msg_t *)msgHdr);
+            CFE_MSG_GetSize(&msgHdr->Msg, &lengthToCopy);
+            // TODO: Check this fix is functionally the same as below
+            // lengthToCopy = CFE_SB_GetTotalMsgLength((CFE_SB_Msg_t *)msgHdr);
         }
         else
         {
-            lengthToCopy = CFE_SB_GetTotalMsgLength((CFE_SB_Msg_t *)pOverflow->dataStart);
+            CFE_MSG_GetSize((CFE_MSG_Message_t *)&pOverflow->dataStart, &lengthToCopy);
+            // TODO: Check this fix is functionally the same as below
+            // lengthToCopy = CFE_SB_GetTotalMsgLength((CFE_SB_Msg_t *)pOverflow->dataStart);
         }
 
         setHeader = true;
