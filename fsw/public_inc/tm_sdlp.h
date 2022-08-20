@@ -148,7 +148,7 @@ extern "C"
      *       #TM_SDLP_SetOidFrame
      *       #IO_LIB_UTIL_GenPseudoRandomSeq
      *******************************************************************************/
-    int32 TM_SDLP_InitIdlePacket(const CFE_SB_Buffer_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
+    int32 TM_SDLP_InitIdlePacket(CFE_SB_Buffer_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
                                  uint32 patternBitLength);
 
     /******************************************************************************/

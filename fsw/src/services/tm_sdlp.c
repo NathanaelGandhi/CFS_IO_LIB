@@ -26,7 +26,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo);
 /*****************************************************************************/
 /** \brief TMTF_SDLP_InitIdlePacket
 ******************************************************************************/
-int32 TM_SDLP_InitIdlePacket(CFE_SB_Msg_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
+int32 TM_SDLP_InitIdlePacket(CFE_SB_Buffer_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
                              uint32 patternBitLength)
 {
     uint8 *pIdleData      = NULL;
@@ -258,7 +258,7 @@ end_of_function:
 /******************************************************************************/
 /** \brief TM_SDLP_AddPacket
 *******************************************************************************/
-int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket)
+int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pPacket)
 {
     uint16 length  = 0;
     int32  iStatus = TM_SDLP_SUCCESS;
@@ -296,7 +296,7 @@ end_of_function:
 /******************************************************************************/
 /** \brief TM_SDLP_AddIdlePacket
 *******************************************************************************/
-int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePacket)
+int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket)
 {
     int32  iStatus      = TM_SDLP_SUCCESS;
     uint16 lengthToCopy = 0;
@@ -469,7 +469,7 @@ end_of_function:
 /******************************************************************************/
 /** \brief TM_SDLP_SetOidFrame
 *******************************************************************************/
-int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePacket)
+int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket)
 {
     int32  iStatus   = TM_SDLP_SUCCESS;
     uint8 *pIdleData = NULL;
