@@ -59,9 +59,9 @@ int32 TM_SDLP_InitIdlePacket(CFE_SB_Buffer_t *pIdlePacket, uint8 *pIdlePattern, 
     }
 
     /* Idle packet, as specified in CCSDS 133.0-B-1 */
-    CFE_SB_InitMsg((void *)pIdlePacket, 0x3ffU, bufferLength, false);
-    idleDataLength = CFE_SB_GetUserDataLength(pIdlePacket);
-    pIdleData      = CFE_SB_GetUserData(pIdlePacket);
+    CFE_MSG_Init(&pIdlePacket->Msg, CFE_SB_ValueToMsgId(0x3ffU), bufferLength);
+    idleDataLength = CFE_SB_GetUserDataLength(&pIdlePacket->Msg);
+    pIdleData      = CFE_SB_GetUserData(&pIdlePacket->Msg);
 
     patternLength = patternBitLength / 8;
     if (patternBitLength % 8 != 0)
