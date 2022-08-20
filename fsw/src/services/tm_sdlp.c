@@ -471,7 +471,7 @@ end_of_function:
 /******************************************************************************/
 /** \brief TM_SDLP_SetOidFrame
 *******************************************************************************/
-int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket)
+int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdlePacket)
 {
     int32  iStatus   = TM_SDLP_SUCCESS;
     uint8 *pIdleData = NULL;

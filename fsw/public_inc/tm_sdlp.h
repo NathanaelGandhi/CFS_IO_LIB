@@ -329,7 +329,7 @@ extern "C"
      *
      *   \see
      *******************************************************************************/
-    int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket);
+    int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdlePacket);
 
     /******************************************************************************/
     /** \brief Complete a Frame to ready for transmission
