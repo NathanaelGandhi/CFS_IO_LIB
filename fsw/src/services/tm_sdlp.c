@@ -299,7 +299,7 @@ end_of_function:
 int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdlePacket)
 {
     int32  iStatus      = TM_SDLP_SUCCESS;
-    uint16 lengthToCopy = 0;
+    size_t lengthToCopy = 0;
 
     if (pFrameInfo == NULL || pIdlePacket == NULL)
     {
@@ -353,7 +353,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pI
     }
 
     /* Set the idlePacket length in header to lenghtToCopy */
-    CFE_SB_SetTotalMsgLength(pIdlePacket, lengthToCopy);
+    CFE_SB_SetUserDataLength(&pIdlePacket->Msg, lengthToCopy);
 
     /* Add the idle packet. May spill over to overflow buffer. */
     /* iStatus should always return 0 free-octet if successful. */
