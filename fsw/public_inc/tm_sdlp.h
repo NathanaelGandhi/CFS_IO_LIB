@@ -257,7 +257,7 @@ extern "C"
      *       #TM_SDLP_AddData
      *       #TM_SDLP_GenPseudoRandomSeq
      *******************************************************************************/
-    int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket);
+    int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdlePacket);
 
     /******************************************************************************/
     /** \brief Add a Virtual Channel Access (VCA) PDU to the Transfer Frame

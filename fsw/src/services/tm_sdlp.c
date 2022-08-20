@@ -296,7 +296,7 @@ end_of_function:
 /******************************************************************************/
 /** \brief TM_SDLP_AddIdlePacket
 *******************************************************************************/
-int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket)
+int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdlePacket)
 {
     int32  iStatus      = TM_SDLP_SUCCESS;
     uint16 lengthToCopy = 0;
