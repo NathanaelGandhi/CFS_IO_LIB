@@ -339,7 +339,9 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer
     }
 
     /* The Message ID of the idle buffer should always be 0x3ff (Idle Packet). */
-    if (CFE_SB_GetMsgId(pIdlePacket) != 0x3ffU)
+    CFE_SB_MsgId_t msgId;
+    CFE_MSG_GetMsgId(&pIdlePacket->Msg, &msgId);
+    if (CFE_SB_MsgId_Equal(CFE_SB_MsgIdToValue(msgId), 0x3ffU))
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddIdlePacket Error: "
