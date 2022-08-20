@@ -19,8 +19,8 @@
 
 #include "tm_sdlp.h"
 
-static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool  isPacket);
-static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool  isPartial);
+static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool isPacket);
+static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool isPartial);
 static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo);
 
 /*****************************************************************************/
@@ -634,11 +634,11 @@ end_of_function:
  *       #TM_SDLP_AddPacket
  *       #TM_SDLP_AddIdlePacket
  *******************************************************************************/
-static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool  isPacket)
+static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool isPacket)
 {
-    uint16  lengthToCopy = dataLength;
-    int32   iStatus      = TM_SDLP_SUCCESS;
-    bool  isPartial    = false;
+    uint16 lengthToCopy = dataLength;
+    int32  iStatus      = TM_SDLP_SUCCESS;
+    bool   isPartial    = false;
 
     /* Check if the frame is ready to add new data. */
     if (pFrameInfo->isReady == false)
@@ -708,7 +708,7 @@ end_of_function:
  *   \see
  *       #TM_SDLP_AddData
  *******************************************************************************/
-static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool  isPartial)
+static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool isPartial)
 {
     int32  iStatus = TM_SDLP_SUCCESS;
     uint16 lengthToEnd;
@@ -787,7 +787,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
     uint8                   msgHdr[6];
     uint16                  lengthToCopy;
     uint16                  lengthToEnd;
-    bool                  setHeader;
+    bool                    setHeader;
     uint16                  freeOctets;
     TM_SDLP_OverflowInfo_t *pOverflow = &pFrameInfo->overflowInfo;
 
