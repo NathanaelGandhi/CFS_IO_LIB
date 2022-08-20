@@ -57,7 +57,7 @@ int32 IO_LibInit(void)
     }
 
     /* Register the table with CFE */
-    iStatus = CFE_EVS_Register(g_IO_LIB_LibData.EventTbl, IO_LIB_EVT_CNT, CFE_EVS_BINARY_FILTER);
+    iStatus = CFE_EVS_Register(g_IO_LIB_LibData.EventTbl, IO_LIB_EVT_CNT, CFE_EVS_EventFilter_BINARY);
     if (iStatus != CFE_SUCCESS)
     {
         CFE_ES_WriteToSysLog("Failed to register with EVS (0x%08X)\n", iStatus);
