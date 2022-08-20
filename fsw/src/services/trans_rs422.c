@@ -104,7 +104,8 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     /* Set hardware control flags */
     if (ioctl(fd, SIO_HW_OPTS_SET, CS8 | CLOCAL | CREAD | config->cFlags) < 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransRS422 Error: Attribute setting failed.");
         close(fd);
         return IO_TRANS_RS422_SETATTR_ERR;
     }
@@ -156,7 +157,8 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
 
         if (memcmp((void *)&newAttr, (void *)&setAttr, sizeof(setAttr)) != 0)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
+                              "IO_TransRS422 Error: Attribute setting failed.");
             tcsetattr(fd, TCSANOW, &oldAttr);
             return IO_TRANS_RS422_SETATTR_ERR;
         }
@@ -244,7 +246,8 @@ int32 IO_TransRS422Write(int32 fd, uint8 *msg, int32 size)
     {
         if (errno == EBADF)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Write to bad device.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
+                              "IO_TransRS422 Error: Write to bad device.");
             return IO_TRANS_RS422_BADDEVICE_ERR;
         }
         else

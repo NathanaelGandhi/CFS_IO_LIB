@@ -69,13 +69,13 @@ typedef struct
  */
 typedef struct
 {
-    uint16  Service;             /* Service type                          */
-    uint16  PacketVersionNumber; /* always 0 for current version of CCSDS */
-    uint16  SpacecraftId;        /* Spacecraft ID stored in TC header     */
-    uint16  VirtualChannelId;    /* Virtual ID stored in TC header        */
-    uint16  MapId;               /* Map ID stored in Segment Header       */
-    bool  HasSegHdr;           /* Wether a Segment header is present    */
-    bool  HasFrameErrCtl;      /* If frame has err ctrl field           */
+    uint16 Service;             /* Service type                          */
+    uint16 PacketVersionNumber; /* always 0 for current version of CCSDS */
+    uint16 SpacecraftId;        /* Spacecraft ID stored in TC header     */
+    uint16 VirtualChannelId;    /* Virtual ID stored in TC header        */
+    uint16 MapId;               /* Map ID stored in Segment Header       */
+    bool   HasSegHdr;           /* Wether a Segment header is present    */
+    bool   HasFrameErrCtl;      /* If frame has err ctrl field           */
 } TCTF_ChannelService_t;
 
 typedef enum
@@ -106,6 +106,6 @@ uint16 TCTF_GetSegHdrMapId(TCTF_Hdr_t *tfPtr);
 uint16 TCTF_GetPayloadLength(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService);
 uint16 TCTF_CopyData(uint8 *toBuffer, TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService);
 
-bool  TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService);
+bool TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService);
 
 #endif /* _TC_TRANSFER_FRAME_H_ */

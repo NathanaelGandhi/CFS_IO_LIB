@@ -121,14 +121,14 @@ static const uint16 COP1_COP_IN_EFFECT = 1;    /* value to set the COP in Effect
  * Prototypes for internal functions
  *
  *----------------------------------------------------------------------------*/
-static int32   COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
-                             TCTF_ChannelService_t *channelService);
-static int32   COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
-                             TCTF_ChannelService_t *channelService);
-static uint16  COP1_GetTfCommand(TCTF_Hdr_t *tfPtr);
-static uint8   COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr);
-static uint16  COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum);
-static bool  COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
+static int32  COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
+                            TCTF_ChannelService_t *channelService);
+static int32  COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
+                            TCTF_ChannelService_t *channelService);
+static uint16 COP1_GetTfCommand(TCTF_Hdr_t *tfPtr);
+static uint8  COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr);
+static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum);
+static bool   COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
 
 /*
  * Function: COP1_InitClcw
@@ -334,7 +334,7 @@ uint16 COP1_GetClcwVcId(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, bool  value)
+void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, bool value)
 {
     if (clcwPtr == NULL)
     {
@@ -359,7 +359,7 @@ void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, bool  value)
  * Notes:
  *
  */
-bool  COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -385,7 +385,7 @@ bool  COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, bool  value)
+void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, bool value)
 {
     if (clcwPtr == NULL)
     {
@@ -410,7 +410,7 @@ void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, bool  value)
  * Notes:
  *
  */
-bool  COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -435,7 +435,7 @@ bool  COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-bool  COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -460,7 +460,7 @@ bool  COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-bool  COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -485,7 +485,7 @@ bool  COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-bool  COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -591,7 +591,8 @@ int32 COP1_ProcessFrame(uint8 *toBuffer, COP1_Clcw_t *clcwPtr, TCTF_Hdr_t *tfPtr
     }
     else
     {
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION, "COP1 Info: Received invalid transfer frame.");
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION,
+                          "COP1 Info: Received invalid transfer frame.");
         retVal = COP1_INVALID_TF_ERR;
     }
 
@@ -636,7 +637,8 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
 
             COP1_INCR_CLCW_FARMB_CTR(*clcwPtr);
 
-            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION, "COP1 Info: Cmd Transfer Frame UNLOCKED.");
+            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION,
+                              "COP1 Info: Cmd Transfer Frame UNLOCKED.");
         }
         else if (COP1_CMD_SETVR == command)
         {
@@ -739,20 +741,23 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
             case COP1_SEQ_POSITIVE:
                 /* Inside the positive part of the sliding window, retransmit expected frame */
                 COP1_WR_CLCW_RETRAN_FLG(*clcwPtr, 1);
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: Inside Trans Frame Pos Window Edge");
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
+                                  "COP1 Error: Inside Trans Frame Pos Window Edge");
                 retVal = COP1_FARM1_ERR;
                 break;
 
             case COP1_SEQ_NEGATIVE:
                 /* Inside the negative edge of the sliding window, drop the frame */
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: Inside Trans Frame Neg Window Edge");
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
+                                  "COP1 Error: Inside Trans Frame Neg Window Edge");
                 retVal = COP1_FARM1_ERR;
                 break;
 
             case COP1_SEQ_LOCKOUT:
                 /* Outside of the sliding window, enter 'Lockout' state */
                 COP1_WR_CLCW_LOCKOUT_FLG(*clcwPtr, 1);
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: Transfer Frame Lockout Mode Entered.");
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
+                                  "COP1 Error: Transfer Frame Lockout Mode Entered.");
                 retVal = COP1_FARM1_ERR;
                 break;
 
@@ -763,7 +768,8 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
     else
     {
         /* System is in lockout mode  */
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: Cmd Transfer Frame Rejected, In Lockout Mode.");
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
+                          "COP1 Error: Cmd Transfer Frame Rejected, In Lockout Mode.");
         retVal = COP1_FARM1_ERR;
     }
 
@@ -899,9 +905,9 @@ static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
  * Notes:
  *
  */
-static bool  COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
+static bool COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 {
-    bool  result = false;
+    bool result = false;
 
     if (upper < lower)
     {

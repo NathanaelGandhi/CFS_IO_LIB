@@ -114,7 +114,7 @@ extern "C"
      *       #TC_SYNC_DeRandomizeFrame
      *******************************************************************************/
     int32 TC_SYNC_GetTransferFrame(uint8 *pTfBuff, uint8 *pCltu, uint16 tfBuffSize, uint16 cltuLength,
-                                   bool  derandomize);
+                                   bool derandomize);
 
     /******************************************************************************/
     /** \brief Check CLTU Start Sequence (piecewise function)

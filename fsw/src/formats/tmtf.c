@@ -156,7 +156,7 @@ int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val)
  * Notes:
  *
  */
-int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, bool  val)
+int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, bool val)
 {
     if (tfPtr == NULL)
     {
@@ -261,7 +261,7 @@ int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr)
  * Notes:
  *
  */
-int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, bool  val)
+int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, bool val)
 {
     if (tfPtr == NULL)
     {
@@ -279,7 +279,7 @@ int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, bool  val)
  * Notes:
  *
  */
-int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, bool  val)
+int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, bool val)
 {
     if (tfPtr == NULL)
     {
@@ -303,7 +303,7 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, bool  val)
  * Notes:
  *
  */
-int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, bool  val)
+int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, bool val)
 {
     if (tfPtr == NULL)
     {

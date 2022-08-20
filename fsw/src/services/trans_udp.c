@@ -103,7 +103,8 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
     if ((config->timeoutRcv < 0 && config->timeoutRcv != IO_TRANS_PEND_FOREVER) ||
         (config->timeoutSnd < 0 && config->timeoutSnd != IO_TRANS_PEND_FOREVER))
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad config timeout input.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: Bad config timeout input.");
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
@@ -121,8 +122,8 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
         status = inet_aton(&config->cAddr[0], (struct in_addr *)&uiAddr);
         if (status == INET_ATON_ERROR)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad config addr input:%s",
-                              &config->cAddr[0]);
+            CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                              "IO_TransUDP Error: Bad config addr input:%s", &config->cAddr[0]);
             return IO_TRANS_UDP_BAD_INPUT_ERROR;
         }
     }
@@ -186,8 +187,8 @@ int32 IO_TransUdpBindSocket(IO_TransUdp_t *udp)
     /* Bind socket to port */
     if ((bind(udp->sockId, (struct sockaddr *)&udp->sockAddr, sizeof(struct sockaddr)) < 0))
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: bind socket failed. errno:%d",
-                          errno);
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: bind socket failed. errno:%d", errno);
         return IO_TRANS_UDP_SOCKETBIND_ERROR;
     }
 
@@ -234,8 +235,8 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
     status = inet_aton(destAddr, (struct in_addr *)&uiAddr);
     if (status == INET_ATON_ERROR)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad destAddr input: %s 0x%08X",
-                          destAddr, uiAddr);
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: Bad destAddr input: %s 0x%08X", destAddr, uiAddr);
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
@@ -247,8 +248,8 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
     udp->destAddr.sin_addr.s_addr = uiAddr;
     udp->destAddr.sin_port        = htons(usPort);
 
-    CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_INFORMATION, "IO_TransUDP: Destination IP set to %s:%u", destAddr,
-                      usPort);
+    CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_INFORMATION, "IO_TransUDP: Destination IP set to %s:%u",
+                      destAddr, usPort);
 
     return IO_TRANS_UDP_NO_ERROR;
 }

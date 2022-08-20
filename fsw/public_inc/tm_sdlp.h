@@ -103,10 +103,10 @@ extern "C"
                                                    start of frame                            */
         uint32 mutexId;                         /* The mutex ID to protect the TF buffer
                                                    and overflow buffer                       */
-        bool  isFirstHdrPtrSet;               /* Indicates if the TF first header pointer
-                                                   has been set                              */
-        bool                   isReady;       /* Indicates the TF is ready to add data     */
-        bool                   isInitialized; /* Indicates the TF is initialized           */
+        bool isFirstHdrPtrSet;                  /* Indicates if the TF first header pointer
+                                                     has been set                              */
+        bool                     isReady;       /* Indicates the TF is ready to add data     */
+        bool                     isInitialized; /* Indicates the TF is initialized           */
         TM_SDLP_OverflowInfo_t   overflowInfo;  /* Overflow Info Structure        */
         TM_SDLP_GlobalConfig_t  *globConfig;    /* Pointer to global config       */
         TM_SDLP_ChannelConfig_t *chnlConfig;    /* Pointer to channel config      */
@@ -148,7 +148,7 @@ extern "C"
      *       #TM_SDLP_SetOidFrame
      *       #IO_LIB_UTIL_GenPseudoRandomSeq
      *******************************************************************************/
-    int32 TM_SDLP_InitIdlePacket(CFE_SB_Msg_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
+    int32 TM_SDLP_InitIdlePacket(const CFE_SB_Buffer_t *pIdlePacket, uint8 *pIdlePattern, uint16 bufferLength,
                                  uint32 patternBitLength);
 
     /******************************************************************************/
@@ -225,7 +225,7 @@ extern "C"
      *   \see
      *       #TM_SDLP_AddData
      *******************************************************************************/
-    int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket);
+    int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pPacket);
 
     /******************************************************************************/
     /** \brief Add an Idle packet to transfer frame
@@ -257,7 +257,7 @@ extern "C"
      *       #TM_SDLP_AddData
      *       #TM_SDLP_GenPseudoRandomSeq
      *******************************************************************************/
-    int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePacket);
+    int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket);
 
     /******************************************************************************/
     /** \brief Add a Virtual Channel Access (VCA) PDU to the Transfer Frame
@@ -329,7 +329,7 @@ extern "C"
      *
      *   \see
      *******************************************************************************/
-    int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePacket);
+    int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pIdlePacket);
 
     /******************************************************************************/
     /** \brief Complete a Frame to ready for transmission

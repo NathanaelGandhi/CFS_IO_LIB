@@ -421,9 +421,9 @@ static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService)
  *  - TODO: add check on Frame Error Control Field, if included
  *
  */
-bool  TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
+bool TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
 {
-    bool  status = true;
+    bool status = true;
 
     if (tfPtr == NULL || channelService == NULL)
     {

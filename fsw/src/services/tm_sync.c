@@ -31,7 +31,7 @@ int32 TM_SYNC_LibInit(void)
 /*****************************************************************************/
 /** \brief TM_SYNC_Synchronize
 ******************************************************************************/
-int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, uint16 frameSize, bool  randomize)
+int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, uint16 frameSize, bool randomize)
 {
     uint16 byte;
     char  *hexchar = asmStr;
