@@ -260,8 +260,8 @@ end_of_function:
 *******************************************************************************/
 int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *pPacket)
 {
-    uint16 length  = 0;
-    int32  iStatus = TM_SDLP_SUCCESS;
+    CFE_MSG_Size_t length  = 0;
+    int32          iStatus = TM_SDLP_SUCCESS;
 
     if (pFrameInfo == NULL || pPacket == NULL)
     {
@@ -283,7 +283,7 @@ int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, const CFE_SB_Buffer_t *
         goto end_of_function;
     }
 
-    length = CFE_SB_GetTotalMsgLength(pPacket);
+    CFE_MSG_GetSize(&pPacket->Msg, &length);
 
     OS_MutSemTake(pFrameInfo->mutexId);
     iStatus = TM_SDLP_AddData(pFrameInfo, (uint8 *)pPacket, length, true);
