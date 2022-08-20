@@ -270,12 +270,12 @@ uint16 TCTF_GetPayloadLength(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelSe
 
     length = TCTF_GetLength(tfPtr) - TCTF_PRIHDR_SIZE;
 
-    if (channelService->HasSegHdr == TRUE)
+    if (channelService->HasSegHdr == true)
     {
         length -= TCTF_SEGHDR_SIZE;
     }
 
-    if (channelService->HasFrameErrCtl == TRUE)
+    if (channelService->HasFrameErrCtl == true)
     {
         length -= TCTF_FRAME_ERROR_CONTROL_SIZE;
     }
@@ -394,7 +394,7 @@ static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService)
 {
     uint16 offset = TCTF_PRIHDR_SIZE;
 
-    if (channelService->HasSegHdr == TRUE)
+    if (channelService->HasSegHdr == true)
     {
         offset += TCTF_SEGHDR_SIZE;
     }
@@ -421,27 +421,27 @@ static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService)
  *  - TODO: add check on Frame Error Control Field, if included
  *
  */
-boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
+bool  TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
 {
-    boolean status = TRUE;
+    bool  status = true;
 
     if (tfPtr == NULL || channelService == NULL)
     {
-        return FALSE;
+        return false;
     }
 
     /* Verify Master Channel Id for every TF */
     if ((TCTF_RD_VERSION(*tfPtr) != channelService->PacketVersionNumber) ||
         (TCTF_RD_SCID(*tfPtr) != channelService->SpacecraftId))
     {
-        status = FALSE;
+        status = false;
     }
     else if (TCTF_SERVICE_MCF != channelService->Service)
     {
         /* Verify Virtual Channel Id for all services with a virtual channel */
         if (TCTF_RD_VCID(*tfPtr) != channelService->VirtualChannelId)
         {
-            status = FALSE;
+            status = false;
         }
         else if ((TCTF_SERVICE_VCP != channelService->Service) && (TCTF_SERVICE_VCA != channelService->Service) &&
                  (TCTF_SERVICE_VCF != channelService->Service))
@@ -449,7 +449,7 @@ boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
             /* Verify MAP Id for all MAP services */
             if (TCTF_RD_SEGHDR_MAPID(*tfPtr) != channelService->MapId)
             {
-                status = FALSE;
+                status = false;
             }
         }
     }
@@ -457,7 +457,7 @@ boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
     /* Verify valid combination of Bypass and Control Command Flags */
     if ((TCTF_CONTROL_FRAME == TCTF_GetCtlCmdFlag(tfPtr) && (TCTF_RD_BYPASS_FLG(*tfPtr) == 0)))
     {
-        status = FALSE;
+        status = false;
     }
 
     return status;

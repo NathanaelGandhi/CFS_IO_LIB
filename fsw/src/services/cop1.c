@@ -29,8 +29,8 @@
  *
  *   -Many of the functions to process transfer frames reuse code from Morpheus
  *
- *   -The use of 'boolean' values for setters/getters assumes the underlying value
- *    for TRUE = 1, and the underlying value for FALSE = 0.  If this were not so,
+ *   -The use of 'bool ' values for setters/getters assumes the underlying value
+ *    for true = 1, and the underlying value for false = 0.  If this were not so,
  *    the CLCW flags would not be set or returned with the expected values.
  *
  * History:
@@ -128,7 +128,7 @@ static int32   COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toB
 static uint16  COP1_GetTfCommand(TCTF_Hdr_t *tfPtr);
 static uint8   COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr);
 static uint16  COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum);
-static boolean COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
+static bool  COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
 
 /*
  * Function: COP1_InitClcw
@@ -334,7 +334,7 @@ uint16 COP1_GetClcwVcId(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, boolean value)
+void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, bool  value)
 {
     if (clcwPtr == NULL)
     {
@@ -359,7 +359,7 @@ void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, boolean value)
  * Notes:
  *
  */
-boolean COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
+bool  COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -385,7 +385,7 @@ boolean COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, boolean value)
+void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, bool  value)
 {
     if (clcwPtr == NULL)
     {
@@ -410,7 +410,7 @@ void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, boolean value)
  * Notes:
  *
  */
-boolean COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
+bool  COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -435,7 +435,7 @@ boolean COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
+bool  COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -460,7 +460,7 @@ boolean COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
+bool  COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -485,7 +485,7 @@ boolean COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
+bool  COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -576,7 +576,7 @@ int32 COP1_ProcessFrame(uint8 *toBuffer, COP1_Clcw_t *clcwPtr, TCTF_Hdr_t *tfPtr
     }
 
     /* Process frame if this is the correct destination service */
-    if (TRUE == TCTF_IsValidTf(tfPtr, channelService))
+    if (true == TCTF_IsValidTf(tfPtr, channelService))
     {
         if (TCTF_GetBypassFlag(tfPtr))
         {
@@ -899,9 +899,9 @@ static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
  * Notes:
  *
  */
-static boolean COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
+static bool  COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 {
-    boolean result = FALSE;
+    bool  result = false;
 
     if (upper < lower)
     {

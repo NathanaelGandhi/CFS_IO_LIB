@@ -19,8 +19,8 @@
 
 #include "tm_sdlp.h"
 
-static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, boolean isPacket);
-static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, boolean isPartial);
+static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool  isPacket);
+static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool  isPartial);
 static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo);
 
 /*****************************************************************************/
@@ -59,7 +59,7 @@ int32 TM_SDLP_InitIdlePacket(CFE_SB_Msg_t *pIdlePacket, uint8 *pIdlePattern, uin
     }
 
     /* Idle packet, as specified in CCSDS 133.0-B-1 */
-    CFE_SB_InitMsg((void *)pIdlePacket, 0x3ffU, bufferLength, FALSE);
+    CFE_SB_InitMsg((void *)pIdlePacket, 0x3ffU, bufferLength, false);
     idleDataLength = CFE_SB_GetUserDataLength(pIdlePacket);
     pIdleData      = CFE_SB_GetUserData(pIdlePacket);
 
@@ -112,8 +112,8 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
 
     /* The secHdr Length must be between 1-63 bytes if present.
      * (TM_SDLP 4.1.3.1.3) */
-    if ((pChannelConfig->fshFlag == TRUE && (secHdrLength > TMTF_SECHDR_MAX_LENGTH || secHdrLength < 1)) ||
-        (pChannelConfig->fshFlag == FALSE && secHdrLength != 0))
+    if ((pChannelConfig->fshFlag == true && (secHdrLength > TMTF_SECHDR_MAX_LENGTH || secHdrLength < 1)) ||
+        (pChannelConfig->fshFlag == false && secHdrLength != 0))
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_InitChannel Error: "
@@ -134,12 +134,12 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
 
     dataFieldLength -= dataFieldOffset;
 
-    if (pChannelConfig->ocfFlag == TRUE)
+    if (pChannelConfig->ocfFlag == true)
     {
         dataFieldLength -= TMTF_OCF_LENGTH;
     }
 
-    if (pGlobalConfig->hasErrCtrl == TRUE)
+    if (pGlobalConfig->hasErrCtrl == true)
     {
         dataFieldLength -= TMTF_ERR_CTRL_FIELD_LENGTH;
     }
@@ -163,10 +163,10 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
     pFrameInfo->globConfig        = pGlobalConfig;
     pFrameInfo->chnlConfig        = pChannelConfig;
     pFrameInfo->frame             = (TMTF_PriHdr_t *)pTfBuffer;
-    pFrameInfo->isFirstHdrPtrSet  = FALSE;
-    pFrameInfo->isReady           = FALSE;
+    pFrameInfo->isFirstHdrPtrSet  = false;
+    pFrameInfo->isReady           = false;
 
-    if (pChannelConfig->ocfFlag == TRUE)
+    if (pChannelConfig->ocfFlag == true)
     {
         pFrameInfo->errCtrlOffset = pFrameInfo->ocfOffset + TMTF_OCF_LENGTH;
     }
@@ -193,7 +193,7 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
     CFE_PSP_MemSet((void *)pOverflowBuffer, 0, pChannelConfig->overflowSize);
 
     /* Set secondary header flag and sec hdr length */
-    if (pChannelConfig->fshFlag == TRUE)
+    if (pChannelConfig->fshFlag == true)
     {
         TMTF_SetSecHdrFlag(pFrameInfo->frame, 1);
         TMTF_SetSecHdrLength(pFrameInfo->frame, secHdrLength);
@@ -223,7 +223,7 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
     sprintf(mutName, "TF Global VC ID %d", gvcid);
     OS_MutSemCreate(&pFrameInfo->mutexId, mutName, 0);
 
-    pFrameInfo->isInitialized = TRUE;
+    pFrameInfo->isInitialized = true;
 
 end_of_function:
     return iStatus;
@@ -273,7 +273,7 @@ int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket)
         goto end_of_function;
     }
 
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_AddPacket Error: "
@@ -286,7 +286,7 @@ int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket)
     length = CFE_SB_GetTotalMsgLength(pPacket);
 
     OS_MutSemTake(pFrameInfo->mutexId);
-    iStatus = TM_SDLP_AddData(pFrameInfo, (uint8 *)pPacket, length, TRUE);
+    iStatus = TM_SDLP_AddData(pFrameInfo, (uint8 *)pPacket, length, true);
     OS_MutSemGive(pFrameInfo->mutexId);
 
 end_of_function:
@@ -311,7 +311,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdle
         goto end_of_function;
     }
 
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_AddIdlePacket Error: "
@@ -355,7 +355,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdle
 
     /* Add the idle packet. May spill over to overflow buffer. */
     /* iStatus should always return 0 free-octet if successful. */
-    iStatus = TM_SDLP_AddData(pFrameInfo, (uint8 *)pIdlePacket, lengthToCopy, TRUE);
+    iStatus = TM_SDLP_AddData(pFrameInfo, (uint8 *)pIdlePacket, lengthToCopy, true);
     OS_MutSemGive(pFrameInfo->mutexId);
 
 end_of_function:
@@ -380,7 +380,7 @@ int32 TM_SDLP_AddVcaData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 d
     }
 
     /* Check if the frame is initialized */
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_AddVcaData Error: "
@@ -391,7 +391,7 @@ int32 TM_SDLP_AddVcaData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 d
     }
 
     OS_MutSemTake(pFrameInfo->mutexId);
-    iStatus = TM_SDLP_AddData(pFrameInfo, pData, dataLength, FALSE);
+    iStatus = TM_SDLP_AddData(pFrameInfo, pData, dataLength, false);
     OS_MutSemGive(pFrameInfo->mutexId);
 
 end_of_function:
@@ -419,7 +419,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
     }
 
     /* Check if frame has been initialized */
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_StartFrame Error: "
@@ -432,7 +432,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
     OS_MutSemTake(pFrameInfo->mutexId);
 
     /* If the frame is already started, issue a warning. */
-    if (pFrameInfo->isReady == TRUE)
+    if (pFrameInfo->isReady == true)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_INFORMATION,
                           "TM_SDLP_StartFrame: "
@@ -440,7 +440,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
     }
 
     /* Set Frame as ready */
-    pFrameInfo->isReady = TRUE;
+    pFrameInfo->isReady = true;
 
     pOverflow    = &pFrameInfo->overflowInfo;
     lengthToCopy = pOverflow->buffSize - pOverflow->freeOctets;
@@ -485,7 +485,7 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePa
     }
 
     /* Check if frame has been initialized */
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_SetOidFrame Error: "
@@ -513,8 +513,8 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePa
     pIdleData = CFE_SB_GetUserData(pIdlePacket);
 
     TMTF_SetFirstHdrPtr(pFrameInfo->frame, TMTF_OID_FIRST_HDR_PTR);
-    pFrameInfo->isFirstHdrPtrSet = TRUE;
-    iStatus                      = TM_SDLP_AddData(pFrameInfo, pIdleData, pFrameInfo->dataFieldLength, FALSE);
+    pFrameInfo->isFirstHdrPtrSet = true;
+    iStatus                      = TM_SDLP_AddData(pFrameInfo, pIdleData, pFrameInfo->dataFieldLength, false);
 
     OS_MutSemGive(pFrameInfo->mutexId);
 
@@ -541,7 +541,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
     }
 
     /* Check if frame has been initialized */
-    if (pFrameInfo->isInitialized == FALSE)
+    if (pFrameInfo->isInitialized == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_CompleteFrame Error: "
@@ -551,7 +551,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
         goto end_of_function;
     }
 
-    if (pFrameInfo->chnlConfig->ocfFlag == TRUE && pOcf == NULL)
+    if (pFrameInfo->chnlConfig->ocfFlag == true && pOcf == NULL)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP_CompleteFrame Error: "
@@ -568,7 +568,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
     TMTF_SetMcFrameCount(pFrameInfo->frame, *pMcFrameCnt);
 
     /* Increment VC frame count if it is a virtual channel */
-    if (pFrameInfo->chnlConfig->isMaster == FALSE)
+    if (pFrameInfo->chnlConfig->isMaster == false)
     {
         vcFrameCnt = TMTF_IncrVcFrameCount(pFrameInfo->frame);
     }
@@ -586,7 +586,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
     }
 
     /* This may happen if the frame is filled by a partial Packet */
-    if (pFrameInfo->isFirstHdrPtrSet == FALSE)
+    if (pFrameInfo->isFirstHdrPtrSet == false)
     {
         TMTF_SetFirstHdrPtr(pFrameInfo->frame, TMTF_NO_FIRST_HDR_PTR);
     }
@@ -594,8 +594,8 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
     /* Reset frame metadata */
     pFrameInfo->freeOctets        = pFrameInfo->dataFieldLength;
     pFrameInfo->currentDataOffset = pFrameInfo->dataFieldOffset;
-    pFrameInfo->isFirstHdrPtrSet  = FALSE;
-    pFrameInfo->isReady           = FALSE;
+    pFrameInfo->isFirstHdrPtrSet  = false;
+    pFrameInfo->isReady           = false;
 
     OS_MutSemGive(pFrameInfo->mutexId);
 
@@ -634,14 +634,14 @@ end_of_function:
  *       #TM_SDLP_AddPacket
  *       #TM_SDLP_AddIdlePacket
  *******************************************************************************/
-static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, boolean isPacket)
+static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool  isPacket)
 {
     uint16  lengthToCopy = dataLength;
     int32   iStatus      = TM_SDLP_SUCCESS;
-    boolean isPartial    = FALSE;
+    bool  isPartial    = false;
 
     /* Check if the frame is ready to add new data. */
-    if (pFrameInfo->isReady == FALSE)
+    if (pFrameInfo->isReady == false)
     {
         CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
                           "TM_SDLP Error: "
@@ -657,7 +657,7 @@ static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint
         lengthToCopy = pFrameInfo->freeOctets;
         if (lengthToCopy > 0)
         {
-            isPartial = TRUE;
+            isPartial = true;
         }
 
         iStatus = TM_SDLP_CopyToOverflow(&pFrameInfo->overflowInfo, pData + lengthToCopy, dataLength - lengthToCopy,
@@ -671,11 +671,11 @@ static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint
     CFE_PSP_MemCpy((void *)pFrameInfo->frame + pFrameInfo->currentDataOffset, pData, lengthToCopy);
     pFrameInfo->freeOctets -= lengthToCopy;
 
-    if ((isPacket == TRUE) && (pFrameInfo->isFirstHdrPtrSet == FALSE))
+    if ((isPacket == true) && (pFrameInfo->isFirstHdrPtrSet == false))
     {
         uint16 firstHdrPtr = pFrameInfo->currentDataOffset - pFrameInfo->dataFieldOffset;
         TMTF_SetFirstHdrPtr(pFrameInfo->frame, firstHdrPtr);
-        pFrameInfo->isFirstHdrPtrSet = TRUE;
+        pFrameInfo->isFirstHdrPtrSet = true;
     }
     pFrameInfo->currentDataOffset += lengthToCopy;
     iStatus = (int32)pFrameInfo->freeOctets;
@@ -708,7 +708,7 @@ end_of_function:
  *   \see
  *       #TM_SDLP_AddData
  *******************************************************************************/
-static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, boolean isPartial)
+static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool  isPartial)
 {
     int32  iStatus = TM_SDLP_SUCCESS;
     uint16 lengthToEnd;
@@ -752,7 +752,7 @@ static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *da
     }
 
     /* If we are passing only partial data, set the partialOctets */
-    if (isPartial == TRUE)
+    if (isPartial == true)
     {
         pOverflow->partialOctets = length;
     }
@@ -787,7 +787,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
     uint8                   msgHdr[6];
     uint16                  lengthToCopy;
     uint16                  lengthToEnd;
-    boolean                 setHeader;
+    bool                  setHeader;
     uint16                  freeOctets;
     TM_SDLP_OverflowInfo_t *pOverflow = &pFrameInfo->overflowInfo;
 
@@ -801,7 +801,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
     if (pFrameInfo->overflowInfo.partialOctets > 0)
     {
         lengthToCopy = pFrameInfo->overflowInfo.partialOctets;
-        setHeader    = FALSE;
+        setHeader    = false;
     }
     /* Otherwise, copy the first packet */
     else
@@ -819,14 +819,14 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
             lengthToCopy = CFE_SB_GetTotalMsgLength((CFE_SB_Msg_t *)pOverflow->dataStart);
         }
 
-        setHeader = TRUE;
+        setHeader = true;
     }
 
     /* Only copy as many octets as TF has free octets available */
     if (freeOctets < lengthToCopy)
     {
         /* If we are passing a full packet, set the new value of partialOctets */
-        if (setHeader == TRUE)
+        if (setHeader == true)
         {
             pFrameInfo->overflowInfo.partialOctets = lengthToCopy - freeOctets;
         }
@@ -841,7 +841,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
     }
     /* If we are copying partial octets and there is enough freeOctets for all
      * partial octets, reset the partialOctets to 0. */
-    else if (setHeader == FALSE)
+    else if (setHeader == false)
     {
         pFrameInfo->overflowInfo.partialOctets = 0;
     }

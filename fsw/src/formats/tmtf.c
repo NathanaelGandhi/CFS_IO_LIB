@@ -156,7 +156,7 @@ int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val)
  * Notes:
  *
  */
-int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, boolean val)
+int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, bool  val)
 {
     if (tfPtr == NULL)
     {
@@ -261,7 +261,7 @@ int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr)
  * Notes:
  *
  */
-int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val)
+int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, bool  val)
 {
     if (tfPtr == NULL)
     {
@@ -279,7 +279,7 @@ int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val)
  * Notes:
  *
  */
-int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val)
+int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, bool  val)
 {
     if (tfPtr == NULL)
     {
@@ -288,7 +288,7 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val)
 
     TMTF_WR_SYNCFLAG(*tfPtr, val);
 
-    if (val == FALSE)
+    if (val == false)
     {
         TMTF_WR_PKTORDERFLAG(*tfPtr, 0);
         TMTF_WR_SEGLENGTHID(*tfPtr, 3); /* binary '11' = not used */
@@ -303,7 +303,7 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val)
  * Notes:
  *
  */
-int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, boolean val)
+int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, bool  val)
 {
     if (tfPtr == NULL)
     {
@@ -368,7 +368,7 @@ int32 TMTF_SetSecHdrLength(TMTF_PriHdr_t *tfPtr, uint8 val)
         return TMTF_INVALID_POINTER;
     }
 
-    if (TMTF_RD_SECHDRFLAG(*tfPtr) == FALSE)
+    if (TMTF_RD_SECHDRFLAG(*tfPtr) == false)
     {
         return TMTF_INVALID_SECHDR;
     }
@@ -402,7 +402,7 @@ int32 TMTF_SetSecHdrData(TMTF_PriHdr_t *tfPtr, uint8 *data, uint8 length)
         return TMTF_INVALID_POINTER;
     }
 
-    if (TMTF_RD_SECHDRFLAG(*tfPtr) == FALSE)
+    if (TMTF_RD_SECHDRFLAG(*tfPtr) == false)
     {
         return TMTF_INVALID_SECHDR;
     }
@@ -432,7 +432,7 @@ int32 TMTF_SetOcf(TMTF_PriHdr_t *tfPtr, uint8 *data, uint16 offset)
         return TMTF_INVALID_POINTER;
     }
 
-    if (TMTF_RD_OCFFLAG(*tfPtr) == FALSE)
+    if (TMTF_RD_OCFFLAG(*tfPtr) == false)
     {
         return TMTF_ERROR;
     }
