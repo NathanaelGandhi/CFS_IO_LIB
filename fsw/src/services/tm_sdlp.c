@@ -512,7 +512,7 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Buffer_t *pIdl
         goto end_of_function;
     }
 
-    pIdleData = CFE_SB_GetUserData(pIdlePacket);
+    pIdleData = CFE_SB_GetUserData(&pIdlePacket->Msg);
 
     TMTF_SetFirstHdrPtr(pFrameInfo->frame, TMTF_OID_FIRST_HDR_PTR);
     pFrameInfo->isFirstHdrPtrSet = true;
