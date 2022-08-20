@@ -46,7 +46,7 @@ int32 IO_LibInit(void)
 
     if (iStatus != CFE_SUCCESS)
     {
-        CFE_ES_WriteToSysLog("IO_Lib Init failed.\n", iStatus);
+        CFE_ES_WriteToSysLog("IO_Lib Init failed. %d\n", iStatus);
     }
 
     CFE_PSP_MemSet((void *)g_IO_LIB_LibData.EventTbl, 0x00, sizeof(g_IO_LIB_LibData.EventTbl));
