@@ -148,14 +148,14 @@ int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val);
  *
  * Arguments:
  *   tfPtr: pointer to the transfer frame
- *   val  : boolean value to set the flag
+ *   val  : bool  value to set the flag
  *
  * Return:
  *   TMTF_SUCCESS          if the value is set
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
-int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, boolean val);
+int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, bool  val);
 
 /*
  * Function: TMTF_GetMcId
@@ -248,14 +248,14 @@ int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr);
  *
  * Arguments:
  *   tfPtr: pointer to the transfer frame
- *   val  : boolean value to set the flag
+ *   val  : bool  value to set the flag
  *
  * Return:
  *   TMTF_SUCCESS          if the value is set
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
-int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val);
+int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, bool  val);
 
 /*
  * Function: TMTF_SetSyncFlag
@@ -267,14 +267,14 @@ int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val);
  *
  * Arguments:
  *   tfPtr: pointer to the transfer frame
- *   val  : boolean value to set the flag
+ *   val  : bool  value to set the flag
  *
  * Return:
  *   TMTF_SUCCESS          if the value is set
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
-int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val);
+int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, bool  val);
 
 /*
  * Function: TMTF_SetPacketOrderFlag
@@ -284,14 +284,14 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val);
  *
  * Arguments:
  *   tfPtr: pointer to the transfer frame
- *   val  : boolean value to set the flag
+ *   val  : bool  value to set the flag
  *
  * Return:
  *   TMTF_SUCCESS          if the value is set
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
-int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, boolean val);
+int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, bool  val);
 
 /*
  * Function: TMTF_SetSegLengthId

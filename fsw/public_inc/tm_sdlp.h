@@ -103,10 +103,10 @@ extern "C"
                                                    start of frame                            */
         uint32 mutexId;                         /* The mutex ID to protect the TF buffer
                                                    and overflow buffer                       */
-        boolean isFirstHdrPtrSet;               /* Indicates if the TF first header pointer
+        bool  isFirstHdrPtrSet;               /* Indicates if the TF first header pointer
                                                    has been set                              */
-        boolean                  isReady;       /* Indicates the TF is ready to add data     */
-        boolean                  isInitialized; /* Indicates the TF is initialized           */
+        bool                   isReady;       /* Indicates the TF is ready to add data     */
+        bool                   isInitialized; /* Indicates the TF is initialized           */
         TM_SDLP_OverflowInfo_t   overflowInfo;  /* Overflow Info Structure        */
         TM_SDLP_GlobalConfig_t  *globConfig;    /* Pointer to global config       */
         TM_SDLP_ChannelConfig_t *chnlConfig;    /* Pointer to channel config      */

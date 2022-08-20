@@ -104,7 +104,7 @@ extern "C"
      *   \see
      *       #TM_SYNC_PseudoRandomize
      *******************************************************************************/
-    int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, uint16 frameSize, boolean randomize);
+    int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, uint16 frameSize, bool  randomize);
 
     /******************************************************************************/
     /** \brief Perform TM Frame PseudoRandomization
