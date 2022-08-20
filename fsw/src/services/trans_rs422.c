@@ -52,7 +52,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
 
     if (config == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: NULL Config input.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: NULL Config input.");
 
         return IO_TRANS_RS422_BADINPUT_ERR;
     }
@@ -61,7 +61,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     speed_t baudRate = IO_TransRS422GetBaudRateMacro(config->baudRate);
     if (baudRate == -1)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Bad input baud rate.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Bad input baud rate.");
 
         return IO_TRANS_RS422_BAUDRATE_ERR;
     }
@@ -69,7 +69,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
 
     if (strcmp(config->device, "") == 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Bad config device.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Bad config device.");
 
         return IO_TRANS_RS422_BADDEVICE_ERR;
     }
@@ -78,7 +78,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     fd = open(config->device, IO_TRANS_RS422_OPEN_FLAGS, 0);
     if (fd < 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
                           "IO_TransRS422 Error: Serial Port: \"%s\" "
                           "Does not exist. Open failed.",
                           config->device);
@@ -89,7 +89,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     /* Set the baudrate */
     if (ioctl(fd, FIOBAUDRATE, config->baudRate) < 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Bad input baud rate.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Bad input baud rate.");
 
         close(fd);
         return IO_TRANS_RS422_BAUDRATE_ERR;
@@ -104,7 +104,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     /* Set hardware control flags */
     if (ioctl(fd, SIO_HW_OPTS_SET, CS8 | CLOCAL | CREAD | config->cFlags) < 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
+        CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
         close(fd);
         return IO_TRANS_RS422_SETATTR_ERR;
     }
@@ -156,7 +156,7 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
 
         if (memcmp((void *)&newAttr, (void *)&setAttr, sizeof(setAttr)) != 0)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Attribute setting failed.");
             tcsetattr(fd, TCSANOW, &oldAttr);
             return IO_TRANS_RS422_SETATTR_ERR;
         }
@@ -244,7 +244,7 @@ int32 IO_TransRS422Write(int32 fd, uint8 *msg, int32 size)
     {
         if (errno == EBADF)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_ERROR, "IO_TransRS422 Error: Write to bad device.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Write to bad device.");
             return IO_TRANS_RS422_BADDEVICE_ERR;
         }
         else

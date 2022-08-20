@@ -40,7 +40,7 @@ int32 TM_SDLP_InitIdlePacket(CFE_SB_Msg_t *pIdlePacket, uint8 *pIdlePattern, uin
 
     if (pIdlePacket == NULL || pIdlePattern == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_InitIdlePacket Error: "
                           "Input Pointer is Null.");
 
@@ -50,7 +50,7 @@ int32 TM_SDLP_InitIdlePacket(CFE_SB_Msg_t *pIdlePacket, uint8 *pIdlePattern, uin
 
     if (patternBitLength == 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_InitIdlePacket Error: "
                           "Input patternBitLength is 0.");
 
@@ -100,7 +100,7 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
     if (pGlobalConfig == NULL || pChannelConfig == NULL || pFrameInfo == NULL || pOverflowBuffer == NULL ||
         pTfBuffer == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_InitChannel Error: "
                           "Input Pointer is Null.");
 
@@ -115,7 +115,7 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
     if ((pChannelConfig->fshFlag == true && (secHdrLength > TMTF_SECHDR_MAX_LENGTH || secHdrLength < 1)) ||
         (pChannelConfig->fshFlag == false && secHdrLength != 0))
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_InitChannel Error: "
                           "Invalid SecHdrLength:%d",
                           secHdrLength);
@@ -146,7 +146,7 @@ int32 TM_SDLP_InitChannel(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pTfBuffer, uin
 
     if (dataFieldLength < 0)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_InitChannel Error: "
                           "Invalid Length Configuration.");
 
@@ -238,7 +238,7 @@ int32 TM_SDLP_FrameHasData(TM_SDLP_FrameInfo_t *pFrameInfo)
 
     if (pFrameInfo == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_FrameHasData Error: "
                           "Input Pointer is Null.");
 
@@ -265,7 +265,7 @@ int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket)
 
     if (pFrameInfo == NULL || pPacket == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddPacket Error: "
                           "Input Pointer is Null.");
 
@@ -275,7 +275,7 @@ int32 TM_SDLP_AddPacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pPacket)
 
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddPacket Error: "
                           "The channel is not initialized.");
 
@@ -303,7 +303,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdle
 
     if (pFrameInfo == NULL || pIdlePacket == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddIdlePacket Error: "
                           "Input Pointer is Null.");
 
@@ -313,7 +313,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdle
 
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddIdlePacket Error: "
                           "The channel is not initialized.");
 
@@ -341,7 +341,7 @@ int32 TM_SDLP_AddIdlePacket(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdle
     /* The Message ID of the idle buffer should always be 0x3ff (Idle Packet). */
     if (CFE_SB_GetMsgId(pIdlePacket) != 0x3ffU)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddIdlePacket Error: "
                           "The IdlePacket has MsgId other than 0x3ff.");
 
@@ -371,7 +371,7 @@ int32 TM_SDLP_AddVcaData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 d
 
     if (pFrameInfo == NULL || pData == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddVcaData Error: "
                           "Input Pointer is Null.");
 
@@ -382,7 +382,7 @@ int32 TM_SDLP_AddVcaData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 d
     /* Check if the frame is initialized */
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_AddVcaData Error: "
                           "The channel is not initialized.");
 
@@ -410,7 +410,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
 
     if (pFrameInfo == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_StartFrame Error: "
                           "Input Pointer is Null.");
 
@@ -421,7 +421,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
     /* Check if frame has been initialized */
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_StartFrame Error: "
                           "The channel is not initialized.");
 
@@ -434,7 +434,7 @@ int32 TM_SDLP_StartFrame(TM_SDLP_FrameInfo_t *pFrameInfo)
     /* If the frame is already started, issue a warning. */
     if (pFrameInfo->isReady == true)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_INFORMATION,
                           "TM_SDLP_StartFrame: "
                           "The frame was already started. Will continue.");
     }
@@ -476,7 +476,7 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePa
 
     if (pFrameInfo == NULL || pIdlePacket == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_SetOidFrame Error: "
                           "Input Pointer is Null.");
 
@@ -487,7 +487,7 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePa
     /* Check if frame has been initialized */
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_SetOidFrame Error: "
                           "The channel is not initialized.");
 
@@ -500,7 +500,7 @@ int32 TM_SDLP_SetOidFrame(TM_SDLP_FrameInfo_t *pFrameInfo, CFE_SB_Msg_t *pIdlePa
     /* If the frame is not empty, This method should not be called. */
     if (pFrameInfo->freeOctets != pFrameInfo->dataFieldLength)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_SetOidFrame Error: "
                           "The frame is not empty. VC ID:%u",
                           pFrameInfo->chnlConfig->vcId);
@@ -532,7 +532,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
 
     if (pFrameInfo == NULL || pMcFrameCnt == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_CompleteFrame Error: "
                           "Input Pointer is Null.");
 
@@ -543,7 +543,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
     /* Check if frame has been initialized */
     if (pFrameInfo->isInitialized == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_CompleteFrame Error: "
                           "The channel is not initialized.");
 
@@ -553,7 +553,7 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
 
     if (pFrameInfo->chnlConfig->ocfFlag == true && pOcf == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP_CompleteFrame Error: "
                           "The Input OCF Pointer is NULL.");
 
@@ -643,7 +643,7 @@ static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint
     /* Check if the frame is ready to add new data. */
     if (pFrameInfo->isReady == false)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP Error: "
                           "The Frame is not ready. Call StartFrame().");
 
@@ -715,7 +715,7 @@ static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *da
 
     if (length > pOverflow->buffSize)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_ERROR,
                           "TM_SDLP ERROR: "
                           "Message Length too large for overflow Buffer.");
 
@@ -726,7 +726,7 @@ static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *da
     /* If the buffer is full, drop message. */
     if (length > pOverflow->freeOctets)
     {
-        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(IO_LIB_TM_SDLP_EID, CFE_EVS_EventType_INFORMATION,
                           "TM_SDLP Warning: "
                           "The Frame's OverflowBuffer is Full. Message Dropped.");
 

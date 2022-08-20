@@ -40,7 +40,7 @@ static int32 IO_TransSelectCheckArgs(IO_TransSelect_t *pSet, int32 fd, int32 eve
     {
         if (event)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_SELECT_EID, CFE_EVS_ERROR, "IO_TransSelect Error: NULL Set input.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_SELECT_EID, CFE_EVS_EventType_ERROR, "IO_TransSelect Error: NULL Set input.");
         }
         return IO_TRANS_SELECT_NULL_SET_ERR;
     }
@@ -49,7 +49,7 @@ static int32 IO_TransSelectCheckArgs(IO_TransSelect_t *pSet, int32 fd, int32 eve
     {
         if (event)
         {
-            CFE_EVS_SendEvent(IO_LIB_TRANS_SELECT_EID, CFE_EVS_ERROR, "IO_TransSelect Error: Bad FD input.");
+            CFE_EVS_SendEvent(IO_LIB_TRANS_SELECT_EID, CFE_EVS_EventType_ERROR, "IO_TransSelect Error: Bad FD input.");
         }
         return IO_TRANS_SELECT_BAD_FD_ERR;
     }
