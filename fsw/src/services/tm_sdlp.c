@@ -670,7 +670,7 @@ static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint
         }
     }
 
-    CFE_PSP_MemCpy((void *)pFrameInfo->frame + pFrameInfo->currentDataOffset, pData, lengthToCopy);
+    CFE_PSP_MemCpy((void *)(pFrameInfo->frame + pFrameInfo->currentDataOffset), pData, lengthToCopy);
     pFrameInfo->freeOctets -= lengthToCopy;
 
     if ((isPacket == true) && (pFrameInfo->isFirstHdrPtrSet == false))
