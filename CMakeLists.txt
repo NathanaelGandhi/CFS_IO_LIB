@@ -8,6 +8,10 @@ set(APP_SRC_FILES
   fsw/src/io_lib_utils.c
   fsw/src/services/tm_sdlp.c
   fsw/src/services/trans_udp.c
+  fsw/src/formats/tmtf.c
+  fsw/src/formats/tctf.c
+  fsw/src/services/tm_sync.c
+  fsw/src/services/tc_sync.c
 )
 
 # aux_source_directory(fsw/src APP_SRC_FILES)
