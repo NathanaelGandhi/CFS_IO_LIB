@@ -53,6 +53,7 @@
 
 #define PORT_NAME_SIZE 20
 
+#define IO_TRANS_RS422_NO_ERROR      0
 #define IO_TRANS_RS422_ERROR         -1
 #define IO_TRANS_RS422_BADINPUT_ERR  -2
 #define IO_TRANS_RS422_BADDEVICE_ERR -3
@@ -67,7 +68,8 @@
 #else
 /* Open the serial port as read / write non-blocking.
  * O_NOCTTY is No controlling TTY (eg: can't send CTRL-C) */
-#define IO_TRANS_RS422_OPEN_FLAGS (O_RDWR | O_NOCTTY | O_NONBLOCK)
+// #define IO_TRANS_RS422_OPEN_FLAGS (O_RDWR | O_NOCTTY | O_NONBLOCK)
+#define IO_TRANS_RS422_OPEN_FLAGS (OS_FILE_FLAG_CREATE)
 #endif
 
 /* Structures */
@@ -81,11 +83,17 @@ typedef struct
                                        on a single read. */
 } IO_TransRS422Config_t;
 
+/** The Working structure for the RS422 */
+typedef struct
+{
+    osal_id_t fd; /**< -- File Desciption                   */
+} IO_TransRS422_t;
+
 /* Prototypes */
-int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn);
-int32 IO_TransRS422Close(int32 fd);
-int32 IO_TransRS422ReadTimeout(int32 fd, uint8 *buffer, int32 numBytes, int32 timeout);
-int32 IO_TransRS422Read(int32 fd, uint8 *buffer, int32 numBytes);
-int32 IO_TransRS422Write(int32 fd, uint8 *msg, int32 size);
+int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn, IO_TransRS422_t *rs422);
+int32 IO_TransRS422Close(IO_TransRS422_t *rs422);
+int32 IO_TransRS422ReadTimeout(IO_TransRS422_t *rs422, uint8 *buffer, int32 numBytes, int32 timeout);
+int32 IO_TransRS422Read(IO_TransRS422_t *rs422, uint8 *buffer, int32 numBytes);
+int32 IO_TransRS422Write(IO_TransRS422_t *rs422, uint8 *msg, int32 size);
 
 #endif

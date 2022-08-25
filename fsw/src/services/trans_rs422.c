@@ -45,9 +45,9 @@ speed_t IO_TransRS422GetBaudRateMacro(int32 bps);
 #endif
 
 /** Initialize an RS422 serial port */
-int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
+int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn, IO_TransRS422_t *rs422)
 {
-    int                    fd;
+    int32                  Status = IO_TRANS_RS422_NO_ERROR;
     IO_TransRS422Config_t *config = (IO_TransRS422Config_t *)configIn;
 
     if (config == NULL)
@@ -75,8 +75,8 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
     }
 
     /* Open the serial port as read / write non-blocking. */
-    fd = open(config->device, IO_TRANS_RS422_OPEN_FLAGS, 0);
-    if (fd < 0)
+    Status = OS_OpenCreate(&rs422->fd, config->device, IO_TRANS_RS422_OPEN_FLAGS, 0);
+    if (&rs422->fd < 0)
     {
         CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
                           "IO_TransRS422 Error: Serial Port: \"%s\" "
@@ -87,26 +87,26 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
 
 #ifdef _VXWORKS_OS_
     /* Set the baudrate */
-    if (ioctl(fd, FIOBAUDRATE, config->baudRate) < 0)
+    if (ioctl(&rs422->fd, FIOBAUDRATE, config->baudRate) < 0)
     {
         CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR, "IO_TransRS422 Error: Bad input baud rate.");
 
-        close(fd);
+        close(&rs422->fd);
         return IO_TRANS_RS422_BAUDRATE_ERR;
     }
 
     /* Set to raw mode */
-    ioctl(fd, FIOSETOPTIONS, OPT_RAW);
+    ioctl(&rs422->fd, FIOSETOPTIONS, OPT_RAW);
 
     /* Clear the buffer */
-    ioctl(fd, FIOFLUSH, 0);
+    ioctl(&rs422->fd, FIOFLUSH, 0);
 
     /* Set hardware control flags */
-    if (ioctl(fd, SIO_HW_OPTS_SET, CS8 | CLOCAL | CREAD | config->cFlags) < 0)
+    if (ioctl(&rs422->fd, SIO_HW_OPTS_SET, CS8 | CLOCAL | CREAD | config->cFlags) < 0)
     {
         CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
                           "IO_TransRS422 Error: Attribute setting failed.");
-        close(fd);
+        close(&rs422->fd);
         return IO_TRANS_RS422_SETATTR_ERR;
     }
 
@@ -117,10 +117,10 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
         struct termios newAttr;
 
         /* Get attributes of device */
-        tcgetattr(fd, &oldAttr);
+        tcgetattr(OS_ObjectIdToInteger(rs422->fd), &oldAttr);
 
         /* Set new attr config */
-        bzero(&setAttr, sizeof(setAttr));
+        CFE_PSP_MemSet((void *)&setAttr, 0x0, sizeof(setAttr));
         /* Set controls
          * Custom cFlags
          * CS8: Set bit/parity/stopbits to 8N1
@@ -148,101 +148,90 @@ int32 IO_TransRS422Init(IO_TransRS422Config_t *configIn)
         cfsetspeed(&setAttr, baudRate);
 
         /* Flush device and set new options. */
-        tcflush(fd, TCIOFLUSH);
-        tcsetattr(fd, TCSANOW, &setAttr);
+        tcflush(OS_ObjectIdToInteger(rs422->fd), TCIOFLUSH);
+        tcsetattr(OS_ObjectIdToInteger(rs422->fd), TCSANOW, &setAttr);
 
         /* Verify that the configuration has been set correctly */
-        bzero(&newAttr, sizeof(newAttr));
-        tcgetattr(fd, &newAttr);
+        CFE_PSP_MemSet((void *)&newAttr, 0x0, sizeof(newAttr));
+        tcgetattr(OS_ObjectIdToInteger(rs422->fd), &newAttr);
 
         if (memcmp((void *)&newAttr, (void *)&setAttr, sizeof(setAttr)) != 0)
         {
             CFE_EVS_SendEvent(IO_LIB_TRANS_RS422_EID, CFE_EVS_EventType_ERROR,
                               "IO_TransRS422 Error: Attribute setting failed.");
-            tcsetattr(fd, TCSANOW, &oldAttr);
+            tcsetattr(OS_ObjectIdToInteger(rs422->fd), TCSANOW, &oldAttr);
             return IO_TRANS_RS422_SETATTR_ERR;
         }
     }
 #endif
 
-    return (int32)fd;
+    return Status;
 }
 
 /** Close the serial port connection */
-int32 IO_TransRS422Close(int32 fd)
+int32 IO_TransRS422Close(IO_TransRS422_t *rs422)
 {
-    return (int32)close(fd);
+    int32 Status = IO_TRANS_RS422_NO_ERROR;
+    Status       = OS_close(rs422->fd);
+    return Status;
 }
 
 /** Read numBytes from serial port with timeout (in us) */
-int32 IO_TransRS422ReadTimeout(int32 fd, uint8 *buffer, int32 numBytes, int32 timeoutIn)
+int32 IO_TransRS422ReadTimeout(IO_TransRS422_t *rs422, uint8 *buffer, int32 numBytes, int32 timeoutIn)
 {
     struct timeval timeout;
     fd_set         fdSet;
-    int32          size = 0;
+    int32          size   = 0;
+    int32          Status = IO_TRANS_RS422_NO_ERROR;
 
     FD_ZERO(&fdSet);
-    FD_SET(fd, &fdSet);
+    FD_SET((int32)&rs422->fd, &fdSet);
 
     /* Wait on serial port for timeout time until some data
      * is available. */
     if (timeoutIn == IO_TRANS_PEND_FOREVER)
     {
-        size = select(fd + 1, &fdSet, NULL, NULL, NULL);
+        size = select(rs422->fd + 1, &fdSet, NULL, NULL, NULL);
     }
     else
     {
         timeout.tv_sec  = timeoutIn / 1000000;
         timeout.tv_usec = timeoutIn % 1000000;
-        size            = select(fd + 1, &fdSet, NULL, NULL, &timeout);
+        size            = select(rs422->fd + 1, &fdSet, NULL, NULL, &timeout);
     }
 
     /* Read the serial port if some data is available. */
     if (size > 0)
     {
-        size = IO_TransRS422Read(fd, buffer, numBytes);
+        Status = IO_TransRS422Read(rs422, buffer, numBytes);
+    }
+    else
+    {
+        Status = IO_TRANS_RS422_ERROR;
     }
 
-    return size;
+    return Status;
 }
 
 /** Read numBytes from serial port */
-int32 IO_TransRS422Read(int32 fd, uint8 *buffer, int32 numBytes)
+int32 IO_TransRS422Read(IO_TransRS422_t *rs422, uint8 *buffer, int32 numBytes)
 {
-    int   totalRead  = 0;
-    int   readSize   = 0;
-    int   remainSize = 0;
-    char *cursor     = (char *)buffer;
+    int32 Status = IO_TRANS_RS422_NO_ERROR;
+    char *cursor = (char *)buffer;
 
-    /* Loop until we read all numBytes or timeout. */
-    while (totalRead < numBytes)
-    {
-        remainSize = numBytes - totalRead;
+    Status = OS_read(rs422->fd, cursor, numBytes);
 
-        /* NOTE: Will not return until at least 1 byte is received
-         * if configured with minBytes > 0 and timeout > 0 */
-        readSize = read(fd, cursor, remainSize);
-
-        /* End of Message or timeout */
-        if (readSize <= 0)
-        {
-            break;
-        }
-
-        totalRead += readSize;
-        cursor += readSize;
-    }
-
-    return totalRead;
+    return Status;
 }
 
 /** Write message to serial port */
-int32 IO_TransRS422Write(int32 fd, uint8 *msg, int32 size)
+int32 IO_TransRS422Write(IO_TransRS422_t *rs422, uint8 *msg, int32 size)
 {
-    int32 sizeOut = 0;
-    sizeOut       = write(fd, (char *)msg, size);
+    int32 Status = IO_TRANS_RS422_NO_ERROR;
 
-    if (sizeOut == -1)
+    Status = OS_write(rs422->fd, (char *)msg, size);
+
+    if (Status == -1)
     {
         if (errno == EBADF)
         {
@@ -256,7 +245,7 @@ int32 IO_TransRS422Write(int32 fd, uint8 *msg, int32 size)
         }
     }
 
-    return sizeOut;
+    return Status;
 }
 
 #ifndef _VXWORKS_OS_
