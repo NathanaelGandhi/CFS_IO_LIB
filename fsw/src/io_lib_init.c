@@ -42,7 +42,7 @@ int32 IO_LibInit(void)
     /* Perform any library initializations */
     iStatus = TMTF_LibInit();
     iStatus |= TM_SYNC_LibInit();
-    iStatus |= TC_SYNC_LibInit();
+    // iStatus |= TC_SYNC_LibInit();
 
     if (iStatus != CFE_SUCCESS)
     {
