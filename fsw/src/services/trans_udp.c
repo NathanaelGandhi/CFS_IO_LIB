@@ -290,8 +290,8 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
 int32 IO_TransUdpRcvTimeout(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize, int32 selectTimeout)
 {
     // struct timeval timeout;
-    fd_set fdSet;
-    int32  size = 0;
+    // fd_set fdSet;
+    int32 size = 0;
 
     if (udp == NULL || buffer == NULL)
     {
@@ -299,8 +299,8 @@ int32 IO_TransUdpRcvTimeout(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize, in
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    FD_ZERO(&fdSet);
-    FD_SET(udp->sockId, &fdSet);
+    // FD_ZERO(&fdSet);
+    // FD_SET(udp->sockId, &fdSet);
 
     // /* Wait on socket for timeout time until some data
     //  * is available. */
