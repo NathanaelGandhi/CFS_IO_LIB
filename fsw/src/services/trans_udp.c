@@ -84,7 +84,6 @@ int32 IO_TransUdpCreateSocket(IO_TransUdp_t *udp)
 int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
 {
     int32 status = IO_TRANS_UDP_NO_ERROR;
-    // uint32         uiAddr = INADDR_ANY;
     // struct timeval timeout;
 
     if (udp == NULL || config == NULL)
@@ -132,24 +131,7 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    // if (strcmp(config->cAddr, IO_TRANS_UDP_INADDR_ANY) == 0)
-    // {
-    //     uiAddr = INADDR_ANY;
-    // }
-    // else
-    // {
-    //     status = inet_aton(&config->cAddr[0], (struct in_addr *)&uiAddr);
-
-    // }
-
-    /* Initialize socket address structures */
-    // CFE_PSP_MemSet((void *)&udp->sockAddr, 0x0, sizeof(struct sockaddr_in));
-    // CFE_PSP_MemSet((void *)&udp->srcAddr, 0x0, sizeof(struct sockaddr_in));
-    // CFE_PSP_MemSet((void *)&udp->destAddr, 0x0, sizeof(struct sockaddr_in));
-
     /* Save UDP Socket Addr structure */
-    // udp->sockAddr.sin_family      = AF_INET;
-    // udp->sockAddr.sin_addr.s_addr = uiAddr;
     status = OS_SocketAddrFromString(&udp->sockAddr, config->cAddr);
     if (status != OS_SUCCESS)
     {
@@ -260,6 +242,8 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
     }
 
     /* Get IP address from cAddr */
+    /* Initialize destination socket structure */
+
     status = OS_SocketAddrInit(&udp->destAddr, OS_SocketDomain_INET);
     if (status != OS_SUCCESS)
     {
@@ -268,11 +252,7 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    /* Initialize destination socket structure */
-    // CFE_PSP_MemSet((void *)&udp->destAddr, 0x0, sizeof(struct sockaddr_in));
-
     /* Save UDP Socket Destination Addr structure */
-    // udp->destAddr.sin_family      = AF_INET;
     status = OS_SocketAddrFromString(&udp->destAddr, destAddr);
     if (status != OS_SUCCESS)
     {
@@ -339,7 +319,6 @@ int32 IO_TransUdpRcvTimeout(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize, in
  *  Will block for timoutRcv msec based on udp configuration. */
 int32 IO_TransUdpRcv(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize)
 {
-    // socklen_t addrLen = sizeof(struct sockaddr_in);
     int32 msgSize;
 
     if (udp == NULL || buffer == NULL)
@@ -349,7 +328,6 @@ int32 IO_TransUdpRcv(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize)
     }
 
     msgSize = OS_SocketRecvFrom(udp->sockId, (void *)buffer, (size_t)bufSize, &udp->srcAddr, 0);
-    // recvfrom(udp->sockId, (void *)buffer, (size_t)bufSize, 0, (struct sockaddr *)&udp->srcAddr, &addrLen);
 
     /* Return size of zero if timed out. */
     if (msgSize < 0)
@@ -372,8 +350,6 @@ int32 IO_TransUdpSnd(IO_TransUdp_t *udp, uint8 *msgPtr, int32 size)
     }
 
     sizeOut = OS_SocketSendTo(udp->sockId, (void *)msgPtr, (size_t)size, &udp->destAddr);
-    // sendto(udp->sockId, (void *)msgPtr, (size_t)size, 0, (struct sockaddr *)&udp->destAddr, sizeof(struct
-    // sockaddr_in));
 
     if (sizeOut < 0)
     {
