@@ -327,7 +327,7 @@ int32 IO_TransUdpRcv(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize)
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    msgSize = OS_SocketRecvFrom(udp->sockId, (void *)buffer, (size_t)bufSize, &udp->srcAddr, 0);
+    msgSize = OS_SocketRecvFrom(udp->sockId, (void *)buffer, (size_t)bufSize, &udp->srcAddr, OS_PEND);
 
     /* Return size of zero if timed out. */
     if (msgSize < 0)
