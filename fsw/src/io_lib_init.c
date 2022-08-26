@@ -36,7 +36,6 @@ extern int32 TMTF_LibInit(void);
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int32 IO_LibInit(void)
 {
-    int32 ii      = 0;
     int32 iStatus = 0;
 
     /* Perform any library initializations */
@@ -49,24 +48,8 @@ int32 IO_LibInit(void)
         CFE_ES_WriteToSysLog("IO_Lib Init failed. %d\n", iStatus);
     }
 
-    memset((void *)g_IO_LIB_LibData.EventTbl, 0x00, sizeof(g_IO_LIB_LibData.EventTbl));
-
-    for (ii = 0; ii < IO_LIB_EVT_CNT; ++ii)
-    {
-        g_IO_LIB_LibData.EventTbl[ii].EventID = ii;
-    }
-
-    /* Register the table with CFE */
-    // iStatus = CFE_EVS_Register(g_IO_LIB_LibData.EventTbl, IO_LIB_EVT_CNT, CFE_EVS_EventFilter_BINARY);
-    // if (iStatus != CFE_SUCCESS)
-    // {
-    //     CFE_ES_WriteToSysLog("Failed to register with EVS (0x%08X)\n", iStatus);
-    // }
-    // else
-    // {
     CFE_ES_WriteToSysLog("IO Lib Initialized.  Version %d.%d.%d.%d\n", IO_LIB_MAJOR_VERSION, IO_LIB_MINOR_VERSION,
                          IO_LIB_REVISION, IO_LIB_MISSION_REV);
-    // }
 
     return iStatus;
 
