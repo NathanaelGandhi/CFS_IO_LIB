@@ -14,9 +14,5 @@ set(APP_SRC_FILES
   fsw/src/services/tc_sync.c
 )
 
-# aux_source_directory(fsw/src APP_SRC_FILES)
-# aux_source_directory(fsw/src/formats APP_SRC_FILES)
-# aux_source_directory(fsw/src/services APP_SRC_FILES)
-
 # Create the app module
 add_cfe_app(io_lib ${APP_SRC_FILES})
