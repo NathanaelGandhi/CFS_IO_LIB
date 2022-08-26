@@ -16,7 +16,7 @@
  *      Ross N. Williams.  http://www.ross.net/crc/download/crc_v3.txt
  *
  * Notes:
- *  -The TM Transfer Frame is the protocol data unit (PDU) of the Telemetry 
+ *  -The TM Transfer Frame is the protocol data unit (PDU) of the Telemetry
  *   Space Data Link Protocol (TM-SDLP).
  *
  * History:
@@ -37,37 +37,36 @@
  */
 
 /* Return codes */
-#define TMTF_SUCCESS            (0)
-#define TMTF_ERROR             (-1)
-#define TMTF_INVALID_POINTER   (-2)
-#define TMTF_INVALID_SECHDR    (-3)
-#define TMTF_INVALID_LENGTH    (-4)
+#define TMTF_SUCCESS         (0)
+#define TMTF_ERROR           (-1)
+#define TMTF_INVALID_POINTER (-2)
+#define TMTF_INVALID_SECHDR  (-3)
+#define TMTF_INVALID_LENGTH  (-4)
 
 /* Fixed parameters to compute CRC */
-#define TMTF_CRC_INIT_REGISTRY  0xffffU
-#define TMTF_CRC_POLYNOMIAL     0x11021UL
+#define TMTF_CRC_INIT_REGISTRY 0xffffU
+#define TMTF_CRC_POLYNOMIAL    0x11021UL
 
 /* Max number of virtual channels */
-#define TMTF_MAX_VC                 8  
+#define TMTF_MAX_VC 8
 
 /* Fixed values */
-#define TMTF_VERSION                1
-#define TMTF_FSH_VERSION            0
+#define TMTF_VERSION     1
+#define TMTF_FSH_VERSION 0
 
-#define TMTF_PRIHDR_LENGTH          6  
-#define TMTF_SECHDR_MAX_LENGTH      63 
-#define TMTF_OCF_LENGTH             4  
-#define TMTF_ERR_CTRL_FIELD_LENGTH  2  
-#define TMTF_NO_FIRST_HDR_PTR       (0x07 << 8 | 0xFF)
-#define TMTF_OID_FIRST_HDR_PTR      (0x07 << 8 | 0xFE)
-
+#define TMTF_PRIHDR_LENGTH         6
+#define TMTF_SECHDR_MAX_LENGTH     63
+#define TMTF_OCF_LENGTH            4
+#define TMTF_ERR_CTRL_FIELD_LENGTH 2
+#define TMTF_NO_FIRST_HDR_PTR      (0x07 << 8 | 0xFF)
+#define TMTF_OID_FIRST_HDR_PTR     (0x07 << 8 | 0xFE)
 
 typedef struct
 {
-    uint8 Id[2];               /* MC id, VC id, OCF flag      */
-    uint8 McFrameCount;        /* Master Channel Frame Count  */
-    uint8 VcFrameCount;        /* Virtual Channel Frame Count */
-    uint8 DataFieldStatus[2];  /* TF Data Field Status        */
+    uint8 Id[2];              /* MC id, VC id, OCF flag      */
+    uint8 McFrameCount;       /* Master Channel Frame Count  */
+    uint8 VcFrameCount;       /* Virtual Channel Frame Count */
+    uint8 DataFieldStatus[2]; /* TF Data Field Status        */
 } TMTF_PriHdr_t;
 
 /*
@@ -85,8 +84,6 @@ typedef struct
  *   - Called by IO_LibInit()
  */
 int32 TMTF_LibInit(void);
-
-
 
 /*
  * Function: TMTF_SetVersion
@@ -109,7 +106,6 @@ int32 TMTF_LibInit(void);
  */
 int32 TMTF_SetVersion(TMTF_PriHdr_t *tfPtr, uint16 val);
 
-
 /*
  * Function: TMTF_SetScId
  *
@@ -126,7 +122,6 @@ int32 TMTF_SetVersion(TMTF_PriHdr_t *tfPtr, uint16 val);
  *
  */
 int32 TMTF_SetScId(TMTF_PriHdr_t *tfPtr, uint16 val);
-
 
 /*
  * Function: TMTF_SetVcId
@@ -145,7 +140,6 @@ int32 TMTF_SetScId(TMTF_PriHdr_t *tfPtr, uint16 val);
  */
 int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val);
 
-
 /*
  * Function: TMTF_SetOcfFlag
  *
@@ -163,18 +157,17 @@ int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val);
  */
 int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, boolean val);
 
-
 /*
  * Function: TMTF_GetMcId
  *
  * Purpose:
- *   Get the Master Channel Id (Version Num + SCID) 
+ *   Get the Master Channel Id (Version Num + SCID)
  *
  * Arguments:
  *   tfPtr: pointer to the transfer frame
  *
  * Return:
- *   Master Channel ID (VersionNumber + SCID) 
+ *   Master Channel ID (VersionNumber + SCID)
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
@@ -190,13 +183,11 @@ int32 TMTF_GetMcId(TMTF_PriHdr_t *tfPtr);
  *   tfPtr: pointer to the transfer frame
  *
  * Return:
- *   Global Virtual Channel ID (MCID + VCID) 
+ *   Global Virtual Channel ID (MCID + VCID)
  *   TMTF_INVALID_POINTER  if the input pointer is NULL
  *
  */
 int32 TMTF_GetGlobalVcId(TMTF_PriHdr_t *tfPtr);
-
-
 
 /*
  * Function: TMTF_SetMcFrameCount
@@ -215,7 +206,6 @@ int32 TMTF_GetGlobalVcId(TMTF_PriHdr_t *tfPtr);
  */
 int32 TMTF_SetMcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val);
 
-
 /*
  * Function: TMTF_SetVcFrameCount
  *
@@ -233,7 +223,6 @@ int32 TMTF_SetMcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val);
  */
 int32 TMTF_SetVcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val);
 
-
 /*
  * Function: TMTF_IncrVcFrameCount
  *
@@ -249,7 +238,6 @@ int32 TMTF_SetVcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val);
  *
  */
 int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr);
-
 
 /*
  * Function: TMTF_SetSecHdrFlag
@@ -268,7 +256,6 @@ int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr);
  *
  */
 int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val);
-
 
 /*
  * Function: TMTF_SetSyncFlag
@@ -289,7 +276,6 @@ int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val);
  */
 int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val);
 
-
 /*
  * Function: TMTF_SetPacketOrderFlag
  *
@@ -307,7 +293,6 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val);
  */
 int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, boolean val);
 
-
 /*
  * Function: TMTF_SetSegLengthId
  *
@@ -324,7 +309,6 @@ int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, boolean val);
  *
  */
 int32 TMTF_SetSegLengthId(TMTF_PriHdr_t *tfPtr, uint16 val);
-
 
 /*
  * Function: TMTF_SetFirstHdrPtr
@@ -348,7 +332,6 @@ int32 TMTF_SetSegLengthId(TMTF_PriHdr_t *tfPtr, uint16 val);
  */
 int32 TMTF_SetFirstHdrPtr(TMTF_PriHdr_t *tfPtr, uint16 val);
 
-
 /*
  * Function: TMTF_SetSecHdrLength
  *
@@ -368,7 +351,6 @@ int32 TMTF_SetFirstHdrPtr(TMTF_PriHdr_t *tfPtr, uint16 val);
  *
  */
 int32 TMTF_SetSecHdrLength(TMTF_PriHdr_t *tfPtr, uint8 val);
-
 
 /*
  * Function: TMTF_SetSecHdrData
@@ -393,7 +375,6 @@ int32 TMTF_SetSecHdrLength(TMTF_PriHdr_t *tfPtr, uint8 val);
  */
 int32 TMTF_SetSecHdrData(TMTF_PriHdr_t *tfPtr, uint8 *data, uint8 length);
 
-
 /*
  * Function: TMTF_SetOcf
  *
@@ -414,8 +395,6 @@ int32 TMTF_SetSecHdrData(TMTF_PriHdr_t *tfPtr, uint8 *data, uint8 length);
  *
  */
 int32 TMTF_SetOcf(TMTF_PriHdr_t *tfPtr, uint8 *data, uint16 offset);
-
-
 
 /*
  * Function: TMTF_UpdateErrCtrlField

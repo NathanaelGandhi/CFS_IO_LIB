@@ -13,8 +13,8 @@
 ** History:
 **   04/26/15, A. Asp, Odyssey Space Research, LLC
 **    * Created
- *   10/22/2015, G. de Carufel, Odyssey Space Research, LLC
- *    -AddIdlePacket and CRC computation. Revised overflow buffer as queue.
+*   10/22/2015, G. de Carufel, Odyssey Space Research, LLC
+*    -AddIdlePacket and CRC computation. Revised overflow buffer as queue.
 **
 *******************************************************************************/
 
@@ -22,8 +22,7 @@
 
 #include "../../public_inc/tmtf.h"
 
-static uint16 crcTable[256];    /* CRC Table generated through GenCrcTable */
-
+static uint16 crcTable[256]; /* CRC Table generated through GenCrcTable */
 
 /*------------------------------------------------------------------------------
  *
@@ -41,54 +40,47 @@ static uint16 crcTable[256];    /* CRC Table generated through GenCrcTable */
  * the expression for 'hdr' must NOT contain any side effects.
  *
  *----------------------------------------------------------------------------*/
-#define TMTF_WR_TF_VERSION(hdr,val)    ((hdr).Id[0] = ((hdr).Id[0] & 0x3F)    | \
-                                                      ((val) << 6))
+#define TMTF_WR_TF_VERSION(hdr, val) ((hdr).Id[0] = ((hdr).Id[0] & 0x3F) | ((val) << 6))
 
-#define TMTF_WR_SCID(hdr,val)          ((hdr).Id[0] = (((hdr).Id[0] & 0xC0)   | \
-                                                       (((val) >> 4) & 0x3F))), \
-                                       ((hdr).Id[1] = (((hdr).Id[1] & 0x0F)   | \
-                                                       (((val) & 0x0F) << 4)))
+#define TMTF_WR_SCID(hdr, val)                                      \
+    ((hdr).Id[0] = (((hdr).Id[0] & 0xC0) | (((val) >> 4) & 0x3F))), \
+        ((hdr).Id[1] = (((hdr).Id[1] & 0x0F) | (((val)&0x0F) << 4)))
 
-#define TMTF_WR_VCID(hdr,val)          ((hdr).Id[1] = (((hdr).Id[1] & 0xF1)   | \
-                                                       (((val) & 0x07) << 1)))
+#define TMTF_WR_VCID(hdr, val) ((hdr).Id[1] = (((hdr).Id[1] & 0xF1) | (((val)&0x07) << 1)))
 
-#define TMTF_RD_OCFFLAG(hdr)           ((hdr).Id[1] & 0x01)
-#define TMTF_WR_OCFFLAG(hdr,val)       ((hdr).Id[1] = (((hdr).Id[1] & 0xFE)   | \
-                                                       ((val) & 0x01)))
+#define TMTF_RD_OCFFLAG(hdr)      ((hdr).Id[1] & 0x01)
+#define TMTF_WR_OCFFLAG(hdr, val) ((hdr).Id[1] = (((hdr).Id[1] & 0xFE) | ((val)&0x01)))
 
-#define TMTF_RD_MCID(hdr)              (((hdr).Id[0] << 8 | ((hdr).Id[1])) >> 4)
-#define TMTF_RD_GVCID(hdr)             ((hdr).Id[0] << 8 | ((hdr).Id[1] & 0xFE))
+#define TMTF_RD_MCID(hdr)  (((hdr).Id[0] << 8 | ((hdr).Id[1])) >> 4)
+#define TMTF_RD_GVCID(hdr) ((hdr).Id[0] << 8 | ((hdr).Id[1] & 0xFE))
 
-#define TMTF_WR_MCFRMCNT(hdr,val)      ((hdr).McFrameCount = (val & 0xFF))
+#define TMTF_WR_MCFRMCNT(hdr, val) ((hdr).McFrameCount = (val & 0xFF))
 
-#define TMTF_WR_VCFRMCNT(hdr,val)      ((hdr).VcFrameCount = (val & 0xFF))
+#define TMTF_WR_VCFRMCNT(hdr, val) ((hdr).VcFrameCount = (val & 0xFF))
 
-#define TMTF_RD_SECHDRFLAG(hdr)        (((hdr).DataFieldStatus[0] & 0x80) >> 7)
-#define TMTF_WR_SECHDRFLAG(hdr,val)    ((hdr).DataFieldStatus[0] = (((val) << 7) | \
-                                             ((hdr).DataFieldStatus[0] & 0x7F)))
+#define TMTF_RD_SECHDRFLAG(hdr)      (((hdr).DataFieldStatus[0] & 0x80) >> 7)
+#define TMTF_WR_SECHDRFLAG(hdr, val) ((hdr).DataFieldStatus[0] = (((val) << 7) | ((hdr).DataFieldStatus[0] & 0x7F)))
 
-#define TMTF_WR_SYNCFLAG(hdr,val)      ((hdr).DataFieldStatus[0] = ((((val) << 6) & 0x40) | \
-                                             ((hdr).DataFieldStatus[0] & 0xBF)))
+#define TMTF_WR_SYNCFLAG(hdr, val) \
+    ((hdr).DataFieldStatus[0] = ((((val) << 6) & 0x40) | ((hdr).DataFieldStatus[0] & 0xBF)))
 
-#define TMTF_WR_PKTORDERFLAG(hdr,val)  ((hdr).DataFieldStatus[0] = ((((val) << 5) & 0x20) | \
-                                            ((hdr).DataFieldStatus[0] & 0xDF)))
+#define TMTF_WR_PKTORDERFLAG(hdr, val) \
+    ((hdr).DataFieldStatus[0] = ((((val) << 5) & 0x20) | ((hdr).DataFieldStatus[0] & 0xDF)))
 
-#define TMTF_WR_SEGLENGTHID(hdr,val)   ((hdr).DataFieldStatus[0] = ((((val) << 3) & 0x18) | \
-                                            ((hdr).DataFieldStatus[0] & 0xE7)))
+#define TMTF_WR_SEGLENGTHID(hdr, val) \
+    ((hdr).DataFieldStatus[0] = ((((val) << 3) & 0x18) | ((hdr).DataFieldStatus[0] & 0xE7)))
 
-#define TMTF_WR_FIRSTHDRPTR(hdr,val)   ((hdr).DataFieldStatus[0] = ((((val) >> 8) & 0x07) | \
-                                            ((hdr).DataFieldStatus[0] & 0xF8))),            \
-                                       ((hdr).DataFieldStatus[1] = (val) & 0xFF)
+#define TMTF_WR_FIRSTHDRPTR(hdr, val)                                                         \
+    ((hdr).DataFieldStatus[0] = ((((val) >> 8) & 0x07) | ((hdr).DataFieldStatus[0] & 0xF8))), \
+        ((hdr).DataFieldStatus[1] = (val)&0xFF)
 
-#define TMTF_RD_SECHDRLENGTH(shdr)     ((shdr) & 0x3F)
-#define TMTF_WR_SECHDRLENGTH(shdr,val) ((shdr) = ((shdr) & 0xC0) | ((val) & 0x3F))
+#define TMTF_RD_SECHDRLENGTH(shdr)      ((shdr)&0x3F)
+#define TMTF_WR_SECHDRLENGTH(shdr, val) ((shdr) = ((shdr)&0xC0) | ((val)&0x3F))
 
-#define TMTF_WR_CRC(ptr,val)           (((ptr)[0] = (val >> 8) & 0xFF),\
-                                        ((ptr)[1] = (val) & 0xFF))
+#define TMTF_WR_CRC(ptr, val) (((ptr)[0] = (val >> 8) & 0xFF), ((ptr)[1] = (val)&0xFF))
 
 /* Prototypes for internal functions */
-static void   TMTF_GenCrcTable(uint32 polynomial);
-
+static void TMTF_GenCrcTable(uint32 polynomial);
 
 /*
  * Function: TMTF_LibInit
@@ -103,7 +95,6 @@ int32 TMTF_LibInit(void)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetVersion
@@ -123,7 +114,6 @@ int32 TMTF_SetVersion(TMTF_PriHdr_t *tfPtr, uint16 val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetScId
  *
@@ -141,7 +131,6 @@ int32 TMTF_SetScId(TMTF_PriHdr_t *tfPtr, uint16 val)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetVcId
@@ -161,7 +150,6 @@ int32 TMTF_SetVcId(TMTF_PriHdr_t *tfPtr, uint16 val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetOcfFlag
  *
@@ -180,7 +168,6 @@ int32 TMTF_SetOcfFlag(TMTF_PriHdr_t *tfPtr, boolean val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_GetMcId
  *
@@ -197,7 +184,6 @@ int32 TMTF_GetMcId(TMTF_PriHdr_t *tfPtr)
     return TMTF_RD_MCID(*tfPtr);
 }
 
-
 /*
  * Function: TMTF_GetGlobalVcId
  *
@@ -213,8 +199,6 @@ int32 TMTF_GetGlobalVcId(TMTF_PriHdr_t *tfPtr)
 
     return TMTF_RD_GVCID(*tfPtr);
 }
-
-
 
 /*
  * Function: TMTF_SetMcFrameCount
@@ -234,7 +218,6 @@ int32 TMTF_SetMcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetVcFrameCount
  *
@@ -252,7 +235,6 @@ int32 TMTF_SetVcFrameCount(TMTF_PriHdr_t *tfPtr, uint16 val)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_IncrVcFrameCount
@@ -273,7 +255,6 @@ int32 TMTF_IncrVcFrameCount(TMTF_PriHdr_t *tfPtr)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetSecHdrFlag
  *
@@ -291,7 +272,6 @@ int32 TMTF_SetSecHdrFlag(TMTF_PriHdr_t *tfPtr, boolean val)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetSyncFlag
@@ -311,12 +291,11 @@ int32 TMTF_SetSyncFlag(TMTF_PriHdr_t *tfPtr, boolean val)
     if (val == FALSE)
     {
         TMTF_WR_PKTORDERFLAG(*tfPtr, 0);
-        TMTF_WR_SEGLENGTHID(*tfPtr, 3);   /* binary '11' = not used */
+        TMTF_WR_SEGLENGTHID(*tfPtr, 3); /* binary '11' = not used */
     }
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetPacketOrderFlag
@@ -336,7 +315,6 @@ int32 TMTF_SetPacketOrderFlag(TMTF_PriHdr_t *tfPtr, boolean val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetSegLengthId
  *
@@ -355,7 +333,6 @@ int32 TMTF_SetSegLengthId(TMTF_PriHdr_t *tfPtr, uint16 val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetFirstHdrPtr
  *
@@ -373,7 +350,6 @@ int32 TMTF_SetFirstHdrPtr(TMTF_PriHdr_t *tfPtr, uint16 val)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetSecHdrLength
@@ -407,7 +383,6 @@ int32 TMTF_SetSecHdrLength(TMTF_PriHdr_t *tfPtr, uint8 val)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_SetSecHdrData
  *
@@ -419,8 +394,8 @@ int32 TMTF_SetSecHdrLength(TMTF_PriHdr_t *tfPtr, uint8 val)
  */
 int32 TMTF_SetSecHdrData(TMTF_PriHdr_t *tfPtr, uint8 *data, uint8 length)
 {
-    uint8 secHdrDataLength = 0;
-    uint8 *secHdrIdPtr     = (uint8 *)(tfPtr) + TMTF_PRIHDR_LENGTH;
+    uint8  secHdrDataLength = 0;
+    uint8 *secHdrIdPtr      = (uint8 *)(tfPtr) + TMTF_PRIHDR_LENGTH;
 
     if ((tfPtr == NULL) || (data == NULL))
     {
@@ -442,7 +417,6 @@ int32 TMTF_SetSecHdrData(TMTF_PriHdr_t *tfPtr, uint8 *data, uint8 length)
 
     return TMTF_SUCCESS;
 }
-
 
 /*
  * Function: TMTF_SetOcf
@@ -468,18 +442,17 @@ int32 TMTF_SetOcf(TMTF_PriHdr_t *tfPtr, uint8 *data, uint16 offset)
     return TMTF_SUCCESS;
 }
 
-
 /*
  * Function: TMTF_UpdateErrCtrlField
  *
  */
 int32 TMTF_UpdateErrCtrlField(TMTF_PriHdr_t *tfPtr, uint16 offset)
 {
-    uint16 reg = 0xffffU;
+    uint16 reg    = 0xffffU;
     uint8 *octPtr = NULL;
-    uint8 byte;
+    uint8  byte;
     uint32 len = 0;
-    
+
     if (tfPtr == NULL)
     {
         return TMTF_INVALID_POINTER;
@@ -492,14 +465,14 @@ int32 TMTF_UpdateErrCtrlField(TMTF_PriHdr_t *tfPtr, uint16 offset)
 
     /* First clear the CRC bytes */
     CFE_PSP_MemSet((void *)((uint8 *)tfPtr + offset), 0x00, 2);
-    
-    octPtr = (uint8 *) tfPtr;
+
+    octPtr = (uint8 *)tfPtr;
 
     len = offset + 2;
     while (len--)
     {
         byte = (reg >> 8) & 0xff;
-        reg = (reg << 8) | *octPtr;
+        reg  = (reg << 8) | *octPtr;
         reg ^= crcTable[byte];
         octPtr++;
     }
@@ -509,17 +482,14 @@ int32 TMTF_UpdateErrCtrlField(TMTF_PriHdr_t *tfPtr, uint16 offset)
     return TMTF_SUCCESS;
 }
 
-
-
 /* ---------------------------  Helper Functions  ----------------------------- */
-
 
 /*
  * Function: TMTF_GenCrcTable
  *
  * Purpose:
  *   Generate the CRC Table for CRC computation
- 
+
  * Arguments:
  *   polynomial  : The polynomial coefficients (eg. 0x1021: x^16 + x^12 + x^5 + 1)
  *
@@ -530,15 +500,15 @@ int32 TMTF_UpdateErrCtrlField(TMTF_PriHdr_t *tfPtr, uint16 offset)
 void TMTF_GenCrcTable(uint32 polynomial)
 {
     uint32 remainder = 0;
-    uint16 topbit = 1 << 15;
-    uint16 val = 0;
-    uint8 bit = 0;
+    uint16 topbit    = 1 << 15;
+    uint16 val       = 0;
+    uint8  bit       = 0;
 
     for (val = 0; val < 256; ++val)
     {
         /* The first remainder (16-bit) is the divident. */
         remainder = val << 8;
-        
+
         /* Perform modulo-2 division, one bit at a time */
         for (bit = 0; bit < 8; ++bit)
         {
@@ -553,6 +523,6 @@ void TMTF_GenCrcTable(uint32 polynomial)
             }
         }
 
-        crcTable[val] = (uint16)remainder;       
+        crcTable[val] = (uint16)remainder;
     }
 }

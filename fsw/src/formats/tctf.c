@@ -19,9 +19,6 @@
 #include "../../public_inc/tctf.h"
 #include "cfe.h"
 
-
-
-
 /*------------------------------------------------------------------------------
  *
  * Macros for reading and writing the fields in a Telecommand Space Data Link
@@ -38,40 +35,31 @@
  * the expression for 'hdr' must NOT contain any side effects.
  *
  *----------------------------------------------------------------------------*/
-#define TCTF_RD_VERSION(hdr)                ((hdr).Octet[0] >> 6)
-#define TCTF_WR_TF_VERSION(hdr,val)         ((hdr).Octet[0] = ((hdr).Octet[0] & 0x3F) | \
-                                                              ((val) << 6))
+#define TCTF_RD_VERSION(hdr)         ((hdr).Octet[0] >> 6)
+#define TCTF_WR_TF_VERSION(hdr, val) ((hdr).Octet[0] = ((hdr).Octet[0] & 0x3F) | ((val) << 6))
 
-#define TCTF_RD_BYPASS_FLG(hdr)             (((hdr).Octet[0] >> 5) & 0x01)
-#define TCTF_WR_BYPASS_FLG(hdr,val)         ((hdr).Octet[0] = ((hdr).Octet[0] & 0xDF) | \
-                                                              (((val) & 0x01) << 5))
+#define TCTF_RD_BYPASS_FLG(hdr)      (((hdr).Octet[0] >> 5) & 0x01)
+#define TCTF_WR_BYPASS_FLG(hdr, val) ((hdr).Octet[0] = ((hdr).Octet[0] & 0xDF) | (((val)&0x01) << 5))
 
-#define TCTF_RD_CTLCMD_FLG(hdr)             (((hdr).Octet[0] >> 4) & 0x01)
-#define TCTF_WR_CTLCMD_FLG(hdr,val)         ((hdr).Octet[0] = ((hdr).Octet[0] & 0xEF) | \
-                                                              (((val) & 0x01) << 4))
+#define TCTF_RD_CTLCMD_FLG(hdr)      (((hdr).Octet[0] >> 4) & 0x01)
+#define TCTF_WR_CTLCMD_FLG(hdr, val) ((hdr).Octet[0] = ((hdr).Octet[0] & 0xEF) | (((val)&0x01) << 4))
 
-#define TCTF_RD_SCID(hdr)                   ((((hdr).Octet[0] & 0x03) << 8) | ((hdr).Octet[1]))
-#define TCTF_WR_SCID(hdr,val)               ((hdr).Octet[0] = ((hdr).Octet[0] & 0xFC) | \
-                                                              (((val) >> 8) & 0x03),    \
-                                             (hdr).Octet[1] = (val))
+#define TCTF_RD_SCID(hdr) ((((hdr).Octet[0] & 0x03) << 8) | ((hdr).Octet[1]))
+#define TCTF_WR_SCID(hdr, val) \
+    ((hdr).Octet[0] = ((hdr).Octet[0] & 0xFC) | (((val) >> 8) & 0x03), (hdr).Octet[1] = (val))
 
-#define TCTF_RD_VCID(hdr)                   ((hdr).Octet[2] >> 2)
-#define TCTF_WR_VCID(hdr,val)               ((hdr).Octet[2] = ((hdr).Octet[2] & 0x03) | \
-                                                              ((val) << 2))
+#define TCTF_RD_VCID(hdr)      ((hdr).Octet[2] >> 2)
+#define TCTF_WR_VCID(hdr, val) ((hdr).Octet[2] = ((hdr).Octet[2] & 0x03) | ((val) << 2))
 
-#define TCTF_RD_LENGTH(hdr)                 ((((hdr).Octet[2] & 0x03) << 8) | ((hdr).Octet[3]))
-#define TCTF_WR_LENGTH(hdr)                 ((hdr).Octet[2] = ((hdr).Octet[2] & 0xFC) | \
-                                                              (((val) >> 8) & 0x03),    \
-                                             (hdr).Octet[3] = (val))
+#define TCTF_RD_LENGTH(hdr) ((((hdr).Octet[2] & 0x03) << 8) | ((hdr).Octet[3]))
+#define TCTF_WR_LENGTH(hdr) ((hdr).Octet[2] = ((hdr).Octet[2] & 0xFC) | (((val) >> 8) & 0x03), (hdr).Octet[3] = (val))
 
-#define TCTF_RD_SEGHDR_SEQ_FLGS(hdr)        ((hdr).SegHdr >> 6)
+#define TCTF_RD_SEGHDR_SEQ_FLGS(hdr) ((hdr).SegHdr >> 6)
 
-#define TCTF_RD_SEGHDR_MAPID(hdr)           ((hdr).SegHdr & 0x3F)
-
+#define TCTF_RD_SEGHDR_MAPID(hdr) ((hdr).SegHdr & 0x3F)
 
 /* Prototypes */
 static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService);
-
 
 /*
  * Function: TCTF_GetVersion
@@ -98,7 +86,6 @@ uint16 TCTF_GetVersion(TCTF_Hdr_t *tfPtr)
     return TCTF_RD_VERSION(*tfPtr);
 }
 
-
 /*
  * Function: TCTF_GetBypassFlag
  *
@@ -123,7 +110,6 @@ uint16 TCTF_GetBypassFlag(TCTF_Hdr_t *tfPtr)
 
     return TCTF_RD_BYPASS_FLG(*tfPtr);
 }
-
 
 /*
  * Function: TCTF_GetCtlCmdFlg
@@ -150,7 +136,6 @@ uint16 TCTF_GetCtlCmdFlag(TCTF_Hdr_t *tfPtr)
     return TCTF_RD_CTLCMD_FLG(*tfPtr);
 }
 
-
 /*
  * Function: TCTF_GetScId
  *
@@ -176,7 +161,6 @@ uint16 TCTF_GetScId(TCTF_Hdr_t *tfPtr)
     return TCTF_RD_SCID(*tfPtr);
 }
 
-
 /*
  * Function: TCTF_GetVcId
  *
@@ -201,7 +185,6 @@ uint16 TCTF_GetVcId(TCTF_Hdr_t *tfPtr)
 
     return TCTF_RD_VCID(*tfPtr);
 }
-
 
 /*
  * Function: TCTF_GetLength
@@ -234,7 +217,6 @@ uint16 TCTF_GetLength(TCTF_Hdr_t *tfPtr)
     return length;
 }
 
-
 /*
  * Function: TCTF_GetSeqNum
  *
@@ -259,7 +241,6 @@ uint8 TCTF_GetSeqNum(TCTF_Hdr_t *tfPtr)
 
     return tfPtr->Sequence;
 }
-
 
 /*
  * Function: TCTF_GetPayloadLength
@@ -302,7 +283,6 @@ uint16 TCTF_GetPayloadLength(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelSe
     return length;
 }
 
-
 /*
  * Function: TCTF_CopyData
  *
@@ -340,7 +320,6 @@ uint16 TCTF_CopyData(uint8 *toBuffer, TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *
     return dataLength;
 }
 
-
 /*
  * Function: TCTF_GetSegHdrSeqFlags
  *
@@ -367,7 +346,6 @@ uint16 TCTF_GetSegHdrSeqFlags(TCTF_Hdr_t *tfPtr)
 
     return TCTF_RD_SEGHDR_SEQ_FLGS(*tfPtr);
 }
-
 
 /*
  * Function: TCTF_GetSegHdrMapId
@@ -396,7 +374,6 @@ uint16 TCTF_GetSegHdrMapId(TCTF_Hdr_t *tfPtr)
     return TCTF_RD_SEGHDR_MAPID(*tfPtr);
 }
 
-
 /*
  * Function: TCTF_GetPayloadOffset
  *
@@ -424,7 +401,6 @@ static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService)
 
     return offset;
 }
-
 
 /*
  * Function: TCTF_IsValidTf
@@ -456,7 +432,7 @@ boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
 
     /* Verify Master Channel Id for every TF */
     if ((TCTF_RD_VERSION(*tfPtr) != channelService->PacketVersionNumber) ||
-        (TCTF_RD_SCID(*tfPtr)    != channelService->SpacecraftId))
+        (TCTF_RD_SCID(*tfPtr) != channelService->SpacecraftId))
     {
         status = FALSE;
     }
@@ -467,8 +443,7 @@ boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
         {
             status = FALSE;
         }
-        else if ((TCTF_SERVICE_VCP != channelService->Service) &&
-                 (TCTF_SERVICE_VCA != channelService->Service) &&
+        else if ((TCTF_SERVICE_VCP != channelService->Service) && (TCTF_SERVICE_VCA != channelService->Service) &&
                  (TCTF_SERVICE_VCF != channelService->Service))
         {
             /* Verify MAP Id for all MAP services */
@@ -480,8 +455,7 @@ boolean TCTF_IsValidTf(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
     }
 
     /* Verify valid combination of Bypass and Control Command Flags */
-    if ((TCTF_CONTROL_FRAME == TCTF_GetCtlCmdFlag(tfPtr) &&
-        (TCTF_RD_BYPASS_FLG(*tfPtr) == 0)))
+    if ((TCTF_CONTROL_FRAME == TCTF_GetCtlCmdFlag(tfPtr) && (TCTF_RD_BYPASS_FLG(*tfPtr) == 0)))
     {
         status = FALSE;
     }
