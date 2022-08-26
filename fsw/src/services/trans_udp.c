@@ -116,6 +116,22 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
      * */
     status = OS_SocketAddrInit(&udp->sockAddr, OS_SocketDomain_INET);
 
+    if (status != OS_SUCCESS)
+    {
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: Cant init Socket Address buffer");
+        return IO_TRANS_UDP_BAD_INPUT_ERROR;
+    }
+
+    status = OS_SocketAddrInit(&udp->srcAddr, OS_SocketDomain_INET);
+
+    if (status != OS_SUCCESS)
+    {
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: Cant init Source Address buffer");
+        return IO_TRANS_UDP_BAD_INPUT_ERROR;
+    }
+
     // if (strcmp(config->cAddr, IO_TRANS_UDP_INADDR_ANY) == 0)
     // {
     //     uiAddr = INADDR_ANY;
@@ -123,12 +139,7 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
     // else
     // {
     //     status = inet_aton(&config->cAddr[0], (struct in_addr *)&uiAddr);
-    //     if (status == INET_ATON_ERROR)
-    //     {
-    //         CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
-    //                           "IO_TransUDP Error: Bad config addr input:%s", &config->cAddr[0]);
-    //         return IO_TRANS_UDP_BAD_INPUT_ERROR;
-    //     }
+
     // }
 
     /* Initialize socket address structures */
@@ -252,8 +263,8 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
     status = OS_SocketAddrInit(&udp->destAddr, OS_SocketDomain_INET);
     if (status != OS_SUCCESS)
     {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad destAddr input: %s",
-                          destAddr);
+        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
+                          "IO_TransUDP Error: cant init dest address buffer");
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
