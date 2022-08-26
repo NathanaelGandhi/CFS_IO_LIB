@@ -250,9 +250,9 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
 
     /* Get IP address from cAddr */
     status = OS_SocketAddrInit(&udp->destAddr, OS_SocketDomain_INET);
-    if (status == INET_ATON_ERROR)
-    {
-        CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad destAddr input: %s",
+    if (status != OS_SUCCESS)
+FE_EV    if (status != OS_SUCCESS)
+S_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR, "IO_TransUDP Error: Bad destAddr input: %s",
                           destAddr);
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
