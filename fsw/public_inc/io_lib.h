@@ -6,8 +6,8 @@
 ** claimed in the United States under Title 17, U.S. Code.
 ** All Other Rights Reserved.
 **
-** Purpose: 
-**  The IO Lib header file 
+** Purpose:
+**  The IO Lib header file
 **
 ** Notes:
 **
@@ -21,14 +21,14 @@
 
 #include "cfe.h"
 #include "common_types.h"
-#include "network_includes.h"
+#include "osapi-sockets.h"
 
 #ifdef _VXWORKS_OS_
 /* For vxworks, include ioLib for ioctl suport */
 #include <ioLib.h>
 
 /* In VxWorks inet_aton() returns OK and ERORR
- * in VxWorks ERROR = -1, OK = 0 
+ * in VxWorks ERROR = -1, OK = 0
  * */
 #define INET_ATON_ERROR ERROR
 
@@ -44,23 +44,21 @@
 
 #include "io_lib_events.h"
 
+#define IO_LIB_MAJOR_VERSION 1
+#define IO_LIB_MINOR_VERSION 0
+#define IO_LIB_REVISION      0
+#define IO_LIB_MISSION_REV   0
 
-#define IO_LIB_MAJOR_VERSION    1
-#define IO_LIB_MINOR_VERSION    0
-#define IO_LIB_REVISION         0
-#define IO_LIB_MISSION_REV      0
+#define IO_LIB_SUCCESS 0
+#define IO_LIB_ERROR   -1
 
-#define IO_LIB_SUCCESS          0
-#define IO_LIB_ERROR           -1
-
-#define IO_TRANS_PEND_FOREVER    -1
+#define IO_TRANS_PEND_FOREVER -1
 
 typedef struct
 {
     /* CFE Event table */
-    CFE_EVS_BinFilter_t  EventTbl[IO_LIB_EVT_CNT];
+    CFE_EVS_BinFilter_t EventTbl[IO_LIB_EVT_CNT];
 } IO_LIB_LibData_t;
-
 
 int32 IO_LibInit(void);
 

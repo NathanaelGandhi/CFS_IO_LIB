@@ -1,22 +1,22 @@
 /******************************************************************************/
 /** \file  tm_sync.c
-*
-*   Copyright 2017 United States Government as represented by the Administrator
-*   of the National Aeronautics and Space Administration.  No copyright is
-*   claimed in the United States under Title 17, U.S. Code.
-*   All Other Rights Reserved.
-*
-*   \brief Provides the TM Channel Synchronization service.
-*
-*   \par Modification History:
-*     - 2015-10-29 | Guy de Carufel | OSR | Code Started 
-*******************************************************************************/
+ *
+ *   Copyright 2017 United States Government as represented by the Administrator
+ *   of the National Aeronautics and Space Administration.  No copyright is
+ *   claimed in the United States under Title 17, U.S. Code.
+ *   All Other Rights Reserved.
+ *
+ *   \brief Provides the TM Channel Synchronization service.
+ *
+ *   \par Modification History:
+ *     - 2015-10-29 | Guy de Carufel | OSR | Code Started
+ *******************************************************************************/
 #include <stdlib.h>
 
 #include "tm_sync.h"
 #include "io_lib_utils.h"
 
-static uint8 prSeq[32]; 
+static uint8 prSeq[32];
 
 /*****************************************************************************/
 /** \brief TM_SYNC_LibInit
@@ -28,38 +28,35 @@ int32 TM_SYNC_LibInit(void)
     return TM_SYNC_SUCCESS;
 }
 
-
 /*****************************************************************************/
 /** \brief TM_SYNC_Synchronize
 ******************************************************************************/
-int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, 
-                          uint16 frameSize, boolean randomize)
+int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize, uint16 frameSize, bool randomize)
 {
     uint16 byte;
-    char *hexchar = asmStr;
-    int32 iStatus = TM_SYNC_SUCCESS;
+    char  *hexchar = asmStr;
+    int32  iStatus = TM_SYNC_SUCCESS;
 
     if (pBuff == NULL || asmStr == NULL)
     {
         iStatus = TM_SYNC_INVALID_POINTER;
         goto end_of_function;
     }
-    
+
     if (asmSize % 2 != 0 || asmSize < 4)
     {
         iStatus = TM_SYNC_INVALID_ASM_SIZE;
         goto end_of_function;
     }
 
-
     /* Store the ASM into the buffer based on the fixed ASM String. */
     for (byte = 0; byte < asmSize; ++byte)
     {
-        sscanf(hexchar, "%2hhx", (uint8 *) &pBuff[byte]);
+        sscanf(hexchar, "%2hhx", (uint8 *)&pBuff[byte]);
         hexchar += 2;
     }
 
-    if (randomize == TRUE)
+    if (randomize == true)
     {
         TM_SYNC_PseudoRandomize(&pBuff[asmSize], frameSize);
     }
@@ -70,7 +67,6 @@ int32 TM_SYNC_Synchronize(uint8 *pBuff, char *asmStr, uint8 asmSize,
 end_of_function:
     return iStatus;
 }
-
 
 /******************************************************************************/
 /** \brief TM_SYNC_PseudoRandomize

@@ -29,8 +29,8 @@
  *
  *   -Many of the functions to process transfer frames reuse code from Morpheus
  *
- *   -The use of 'boolean' values for setters/getters assumes the underlying value
- *    for TRUE = 1, and the underlying value for FALSE = 0.  If this were not so,
+ *   -The use of 'bool ' values for setters/getters assumes the underlying value
+ *    for true = 1, and the underlying value for false = 0.  If this were not so,
  *    the CLCW flags would not be set or returned with the expected values.
  *
  * History:
@@ -39,11 +39,9 @@
  *
  ******************************************************************************/
 
-
 #include "cop1.h"
 #include "io_lib_events.h"
 #include "cfe.h"
-
 
 typedef enum
 {
@@ -61,12 +59,10 @@ typedef enum
     COP1_SEQ_LOCKOUT  = 4
 } COP1_SequenceValidation;
 
-
 static const uint16 COP1_CLCW_SIZE        = 4; /* number of octets for the CLCW */
 static const uint16 COP1_TF_CMDSEQ_OFFSET = 7; /* octet offset in a BC transfer frame to
                                                   the commanded sequence number */
-static const uint16 COP1_COP_IN_EFFECT    = 1; /* value to set the COP in Effect field for COP1 */
-
+static const uint16 COP1_COP_IN_EFFECT = 1;    /* value to set the COP in Effect field for COP1 */
 
 /*------------------------------------------------------------------------------
  *
@@ -86,68 +82,53 @@ static const uint16 COP1_COP_IN_EFFECT    = 1; /* value to set the COP in Effect
  *
  *----------------------------------------------------------------------------*/
 #define COP1_RD_CLCW_CTRLWORDTYPE(clcw)      ((clcw).Status >> 7)
-#define COP1_WR_CLCW_CTRLWORDTYPE(clcw,val)  ((clcw).Status = ((clcw).Status & 0x7F) | \
-                                                              ((val) << 7))
+#define COP1_WR_CLCW_CTRLWORDTYPE(clcw, val) ((clcw).Status = ((clcw).Status & 0x7F) | ((val) << 7))
 
-#define COP1_RD_CLCW_VERSION(clcw)           (((clcw).Status & 0x60) >> 5)
-#define COP1_WR_CLCW_VERSION(clcw,val)       ((clcw).Status = ((clcw).Status & 0x9F) | \
-                                                              (((val) << 5) & 0x60))
+#define COP1_RD_CLCW_VERSION(clcw)      (((clcw).Status & 0x60) >> 5)
+#define COP1_WR_CLCW_VERSION(clcw, val) ((clcw).Status = ((clcw).Status & 0x9F) | (((val) << 5) & 0x60))
 
-#define COP1_RD_CLCW_STATUS(clcw)            (((clcw).Status & 0x1C) >> 2)
-#define COP1_WR_CLCW_STATUS(clcw,val)        ((clcw).Status = ((clcw).Status & 0xE3) | \
-                                                              (((val) << 2) & 0x1C))
+#define COP1_RD_CLCW_STATUS(clcw)      (((clcw).Status & 0x1C) >> 2)
+#define COP1_WR_CLCW_STATUS(clcw, val) ((clcw).Status = ((clcw).Status & 0xE3) | (((val) << 2) & 0x1C))
 
-#define COP1_RD_CLCW_COPEFFECT(clcw)         ((clcw).Status & 0x03)
-#define COP1_WR_CLCW_COPEFFECT(clcw,val)     ((clcw).Status = ((clcw).Status & 0xFC) | \
-                                                              ((val) & 0x03))
+#define COP1_RD_CLCW_COPEFFECT(clcw)      ((clcw).Status & 0x03)
+#define COP1_WR_CLCW_COPEFFECT(clcw, val) ((clcw).Status = ((clcw).Status & 0xFC) | ((val)&0x03))
 
-#define COP1_RD_CLCW_VC(clcw)                (((clcw).Channel & 0xFC) >> 2)
-#define COP1_WR_CLCW_VC(clcw,val)            ((clcw).Channel = ((clcw).Channel & 0x03) | \
-                                                               ((val) << 2))
+#define COP1_RD_CLCW_VC(clcw)      (((clcw).Channel & 0xFC) >> 2)
+#define COP1_WR_CLCW_VC(clcw, val) ((clcw).Channel = ((clcw).Channel & 0x03) | ((val) << 2))
 
-#define COP1_RD_CLCW_NORF_FLG(clcw)          ((clcw).Flags >> 7)
-#define COP1_WR_CLCW_NORF_FLG(clcw,val)      ((clcw).Flags = ((clcw).Flags & 0x7F) | \
-                                                             ((val) << 7))
+#define COP1_RD_CLCW_NORF_FLG(clcw)      ((clcw).Flags >> 7)
+#define COP1_WR_CLCW_NORF_FLG(clcw, val) ((clcw).Flags = ((clcw).Flags & 0x7F) | ((val) << 7))
 
-#define COP1_RD_CLCW_NOBITLOCK_FLG(clcw)     (((clcw).Flags & 0x40) >> 6)
-#define COP1_WR_CLCW_NOBITLOCK_FLG(clcw,val) ((clcw).Flags = ((clcw).Flags & 0xBF) | \
-                                                             (((val) & 0x01) << 6))
+#define COP1_RD_CLCW_NOBITLOCK_FLG(clcw)      (((clcw).Flags & 0x40) >> 6)
+#define COP1_WR_CLCW_NOBITLOCK_FLG(clcw, val) ((clcw).Flags = ((clcw).Flags & 0xBF) | (((val)&0x01) << 6))
 
-#define COP1_RD_CLCW_LOCKOUT_FLG(clcw)       (((clcw).Flags & 0x20) >> 5)
-#define COP1_WR_CLCW_LOCKOUT_FLG(clcw,val)   ((clcw).Flags = ((clcw).Flags & 0xDF) | \
-                                                             (((val) & 0x01) << 5))
+#define COP1_RD_CLCW_LOCKOUT_FLG(clcw)      (((clcw).Flags & 0x20) >> 5)
+#define COP1_WR_CLCW_LOCKOUT_FLG(clcw, val) ((clcw).Flags = ((clcw).Flags & 0xDF) | (((val)&0x01) << 5))
 
-#define COP1_RD_CLCW_WAIT_FLG(clcw)          (((clcw).Flags & 0x10) >> 4)
-#define COP1_WR_CLCW_WAIT_FLG(clcw,val)      ((clcw).Flags = ((clcw).Flags & 0xEF) | \
-                                                             (((val) & 0x01) << 4))
+#define COP1_RD_CLCW_WAIT_FLG(clcw)      (((clcw).Flags & 0x10) >> 4)
+#define COP1_WR_CLCW_WAIT_FLG(clcw, val) ((clcw).Flags = ((clcw).Flags & 0xEF) | (((val)&0x01) << 4))
 
-#define COP1_RD_CLCW_RETRAN_FLG(clcw)        (((clcw).Flags & 0x08) >> 3)
-#define COP1_WR_CLCW_RETRAN_FLG(clcw,val)    ((clcw).Flags = ((clcw).Flags & 0xF7) | \
-                                                             (((val) & 0x01) << 3))
+#define COP1_RD_CLCW_RETRAN_FLG(clcw)      (((clcw).Flags & 0x08) >> 3)
+#define COP1_WR_CLCW_RETRAN_FLG(clcw, val) ((clcw).Flags = ((clcw).Flags & 0xF7) | (((val)&0x01) << 3))
 
-#define COP1_RD_CLCW_FARMB_CTR(clcw)         (((clcw).Flags >> 1) & 0x03)
-#define COP1_WR_CLCW_FARMB_CTR(clcw,val)     ((clcw).Flags = ((clcw).Flags & 0xF9) | \
-                                                             (((val) & 0x03) << 1))
+#define COP1_RD_CLCW_FARMB_CTR(clcw)      (((clcw).Flags >> 1) & 0x03)
+#define COP1_WR_CLCW_FARMB_CTR(clcw, val) ((clcw).Flags = ((clcw).Flags & 0xF9) | (((val)&0x03) << 1))
 
-#define COP1_INCR_CLCW_FARMB_CTR(clcw)       ((clcw).Flags = ((clcw).Flags & 0xF9) | \
-                                                             (((clcw).Flags + 0x02) & 0x06))
-
+#define COP1_INCR_CLCW_FARMB_CTR(clcw) ((clcw).Flags = ((clcw).Flags & 0xF9) | (((clcw).Flags + 0x02) & 0x06))
 
 /*------------------------------------------------------------------------------
  *
  * Prototypes for internal functions
  *
  *----------------------------------------------------------------------------*/
-static int32    COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
-                              TCTF_ChannelService_t *channelService);
-static int32    COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
-                             TCTF_ChannelService_t *channelService);
-static uint16  COP1_GetTfCommand(TCTF_Hdr_t *tfPtr);
-static uint8   COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr);
-static uint16  COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum);
-static boolean COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
-
-
+static int32  COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
+                            TCTF_ChannelService_t *channelService);
+static int32  COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
+                            TCTF_ChannelService_t *channelService);
+static uint16 COP1_GetTfCommand(TCTF_Hdr_t *tfPtr);
+static uint8  COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr);
+static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum);
+static bool   COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper);
 
 /*
  * Function: COP1_InitClcw
@@ -172,8 +153,7 @@ int32 COP1_InitClcw(COP1_Clcw_t *clcwPtr, uint16 vcId)
 {
     if (clcwPtr == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
-                          "COP1 Error: NULL clcw input.");
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: NULL clcw input.");
 
         return COP1_BADINPUT_ERR;
     }
@@ -186,7 +166,6 @@ int32 COP1_InitClcw(COP1_Clcw_t *clcwPtr, uint16 vcId)
 
     return COP1_SUCCESS;
 }
-
 
 /*
  * Function: COP1_GetClcwCtrlWordType
@@ -213,7 +192,6 @@ uint16 COP1_GetClcwCtrlWordType(COP1_Clcw_t *clcwPtr)
     return COP1_RD_CLCW_CTRLWORDTYPE(*clcwPtr);
 }
 
-
 /*
  * Function: COP1_GetClcwVersion
  *
@@ -238,7 +216,6 @@ uint16 COP1_GetClcwVersion(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_VERSION(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_SetClcwStatus
@@ -266,7 +243,6 @@ void COP1_SetClcwStatus(COP1_Clcw_t *clcwPtr, uint16 value)
     COP1_WR_CLCW_STATUS(*clcwPtr, value);
 }
 
-
 /*
  * Function: COP1_GetClcwStatus
  *
@@ -291,7 +267,6 @@ uint16 COP1_GetClcwStatus(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_STATUS(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_GetClcwCopEffect
@@ -318,7 +293,6 @@ uint16 COP1_GetClcwCopEffect(COP1_Clcw_t *clcwPtr)
     return COP1_RD_CLCW_COPEFFECT(*clcwPtr);
 }
 
-
 /*
  * Function: COP1_GetClcwVcId
  *
@@ -344,7 +318,6 @@ uint16 COP1_GetClcwVcId(COP1_Clcw_t *clcwPtr)
     return COP1_RD_CLCW_VC(*clcwPtr);
 }
 
-
 /*
  * Function: COP1_SetClcwNoRf
  *
@@ -361,7 +334,7 @@ uint16 COP1_GetClcwVcId(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, boolean value)
+void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, bool value)
 {
     if (clcwPtr == NULL)
     {
@@ -370,7 +343,6 @@ void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, boolean value)
 
     COP1_WR_CLCW_NORF_FLG(*clcwPtr, value);
 }
-
 
 /*
  * Function: COP1_GetClcwNoRf
@@ -387,7 +359,7 @@ void COP1_SetClcwNoRf(COP1_Clcw_t *clcwPtr, boolean value)
  * Notes:
  *
  */
-boolean COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -396,7 +368,6 @@ boolean COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_NORF_FLG(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_SetClcwNoBitlock
@@ -414,7 +385,7 @@ boolean COP1_GetClcwNoRf(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, boolean value)
+void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, bool value)
 {
     if (clcwPtr == NULL)
     {
@@ -423,7 +394,6 @@ void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, boolean value)
 
     COP1_WR_CLCW_NOBITLOCK_FLG(*clcwPtr, value);
 }
-
 
 /*
  * Function: COP1_GetClcwNoBitlock
@@ -440,7 +410,7 @@ void COP1_SetClcwNoBitlock(COP1_Clcw_t *clcwPtr, boolean value)
  * Notes:
  *
  */
-boolean COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -449,7 +419,6 @@ boolean COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_NOBITLOCK_FLG(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_GetClcwLockout
@@ -466,7 +435,7 @@ boolean COP1_GetClcwNoBitlock(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -475,7 +444,6 @@ boolean COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_LOCKOUT_FLG(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_GetClcwWait
@@ -492,7 +460,7 @@ boolean COP1_GetClcwLockout(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -501,7 +469,6 @@ boolean COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_WAIT_FLG(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_GetClcwRetransmit
@@ -518,7 +485,7 @@ boolean COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-boolean COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
+bool COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
 {
     if (clcwPtr == NULL)
     {
@@ -527,7 +494,6 @@ boolean COP1_GetClcwRetransmit(COP1_Clcw_t *clcwPtr)
 
     return COP1_RD_CLCW_RETRAN_FLG(*clcwPtr);
 }
-
 
 /*
  * Function: COP1_GetClcwFarmbCtr
@@ -554,7 +520,6 @@ uint16 COP1_GetClcwFarmbCtr(COP1_Clcw_t *clcwPtr)
     return COP1_RD_CLCW_FARMB_CTR(*clcwPtr);
 }
 
-
 /*
  * Function: COP1_GetClcwReport
  *
@@ -580,7 +545,6 @@ uint8 COP1_GetClcwReport(COP1_Clcw_t *clcwPtr)
     return clcwPtr->Report;
 }
 
-
 /*
  * Function: COP1_ProcessFrame
  *
@@ -601,20 +565,18 @@ uint8 COP1_GetClcwReport(COP1_Clcw_t *clcwPtr)
  * Notes:
  *
  */
-int32 COP1_ProcessFrame(uint8* toBuffer, COP1_Clcw_t *clcwPtr, TCTF_Hdr_t *tfPtr,
-                        TCTF_ChannelService_t *channelService)
+int32 COP1_ProcessFrame(uint8 *toBuffer, COP1_Clcw_t *clcwPtr, TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelService)
 {
     int32 retVal = 0;
 
     if (tfPtr == NULL || clcwPtr == NULL)
     {
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
-                          "COP1 Error: COP1_ProcessFrame() Bad input.");
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "COP1 Error: COP1_ProcessFrame() Bad input.");
         return COP1_BADINPUT_ERR;
     }
 
     /* Process frame if this is the correct destination service */
-    if (TRUE == TCTF_IsValidTf(tfPtr, channelService))
+    if (true == TCTF_IsValidTf(tfPtr, channelService))
     {
         if (TCTF_GetBypassFlag(tfPtr))
         {
@@ -629,14 +591,13 @@ int32 COP1_ProcessFrame(uint8* toBuffer, COP1_Clcw_t *clcwPtr, TCTF_Hdr_t *tfPtr
     }
     else
     {
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION,
                           "COP1 Info: Received invalid transfer frame.");
         retVal = COP1_INVALID_TF_ERR;
     }
 
     return retVal;
 }
-
 
 /*
  * Function: COP1_BypassTf
@@ -662,7 +623,7 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
                            TCTF_ChannelService_t *channelService)
 {
     uint16 command = 0;
-    int32 retVal   = 0;
+    int32  retVal  = 0;
 
     if (TCTF_CONTROL_FRAME == TCTF_GetCtlCmdFlag(tfPtr))
     {
@@ -676,7 +637,7 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
 
             COP1_INCR_CLCW_FARMB_CTR(*clcwPtr);
 
-            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_INFORMATION,
+            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION,
                               "COP1 Info: Cmd Transfer Frame UNLOCKED.");
         }
         else if (COP1_CMD_SETVR == command)
@@ -688,12 +649,12 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
                 COP1_WR_CLCW_WAIT_FLG(*clcwPtr, 0);
                 clcwPtr->Report = COP1_GetTfCommandedVr(tfPtr);
 
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_INFORMATION,
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_INFORMATION,
                                   "COP1 Info: Cmd Transfer Frame counter set (SETVR).");
             }
             else /* Invalid Control Command Frame, discard and do nothing */
             {
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
                                   "COP1 Error: FARM-1 must be unlocked "
                                   "prior to SETVR");
                 retVal = COP1_FARM1_ERR;
@@ -703,20 +664,18 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
         }
         else /* An unrecognized command */
         {
-            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
-                    "Invalid Bypass Control Command.");
+            CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR, "Invalid Bypass Control Command.");
             retVal = COP1_FARM1_ERR;
         }
     }
-    else  /* Data frame */
+    else /* Data frame */
     {
         COP1_INCR_CLCW_FARMB_CTR(*clcwPtr);
-        retVal = (int32) TCTF_CopyData(toBuffer, tfPtr, channelService);
+        retVal = (int32)TCTF_CopyData(toBuffer, tfPtr, channelService);
     }
 
     return retVal;
 }
-
 
 /*
  * Function: COP1_AcceptTf
@@ -744,7 +703,7 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
  *
  */
 static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
-                          TCTF_ChannelService_t *channelService)
+                           TCTF_ChannelService_t *channelService)
 {
     uint8  seqNum    = tfPtr->Sequence;
     uint8  expSeqNum = clcwPtr->Report;
@@ -755,7 +714,7 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
     if (0 == COP1_RD_CLCW_LOCKOUT_FLG(*clcwPtr))
     {
         /* Perform the sequence validation */
-        sequence  = COP1_CheckTfSequence(seqNum, expSeqNum);
+        sequence = COP1_CheckTfSequence(seqNum, expSeqNum);
 
         switch (sequence)
         {
@@ -767,7 +726,7 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
                     COP1_WR_CLCW_WAIT_FLG(*clcwPtr, 0);
                     COP1_WR_CLCW_RETRAN_FLG(*clcwPtr, 0);
                     clcwPtr->Report++;
-                    retVal = (int32) TCTF_CopyData(toBuffer, tfPtr, channelService);
+                    retVal = (int32)TCTF_CopyData(toBuffer, tfPtr, channelService);
                 }
                 else
                 {
@@ -782,14 +741,14 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
             case COP1_SEQ_POSITIVE:
                 /* Inside the positive part of the sliding window, retransmit expected frame */
                 COP1_WR_CLCW_RETRAN_FLG(*clcwPtr, 1);
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
                                   "COP1 Error: Inside Trans Frame Pos Window Edge");
                 retVal = COP1_FARM1_ERR;
                 break;
 
             case COP1_SEQ_NEGATIVE:
                 /* Inside the negative edge of the sliding window, drop the frame */
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
                                   "COP1 Error: Inside Trans Frame Neg Window Edge");
                 retVal = COP1_FARM1_ERR;
                 break;
@@ -797,7 +756,7 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
             case COP1_SEQ_LOCKOUT:
                 /* Outside of the sliding window, enter 'Lockout' state */
                 COP1_WR_CLCW_LOCKOUT_FLG(*clcwPtr, 1);
-                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
+                CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
                                   "COP1 Error: Transfer Frame Lockout Mode Entered.");
                 retVal = COP1_FARM1_ERR;
                 break;
@@ -809,14 +768,13 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
     else
     {
         /* System is in lockout mode  */
-        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(IO_LIB_COP1_EID, CFE_EVS_EventType_ERROR,
                           "COP1 Error: Cmd Transfer Frame Rejected, In Lockout Mode.");
         retVal = COP1_FARM1_ERR;
     }
 
     return retVal;
 }
-
 
 /*
  * Function: COP1_GetTfCommand
@@ -846,15 +804,13 @@ static uint16 COP1_GetTfCommand(TCTF_Hdr_t *tfPtr)
         command = COP1_CMD_UNLOCK;
     }
 
-    if (bytePtr[offset]   == 0x82 &&
-        bytePtr[offset+1] == 0x00)
+    if (bytePtr[offset] == 0x82 && bytePtr[offset + 1] == 0x00)
     {
         command = COP1_CMD_SETVR;
     }
 
     return command;
 }
-
 
 /*
  * Function: COP1_GetTfCommandedVr
@@ -904,7 +860,7 @@ static uint8 COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr)
  */
 static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
 {
-    const uint8 HALF_SLIDING_WINDOW_WIDTH = (uint8)(COP1_SLIDING_WINDOW_WIDTH/2);
+    const uint8 HALF_SLIDING_WINDOW_WIDTH = (uint8)(COP1_SLIDING_WINDOW_WIDTH / 2);
 
     uint16 status        = COP1_SEQ_UNKNOWN;
     uint8  posWindowEdge = expSeqNum + HALF_SLIDING_WINDOW_WIDTH - 1;
@@ -932,7 +888,6 @@ static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
     return status;
 }
 
-
 /*
  * Function: COP1_isInWrappedRange
  *
@@ -950,13 +905,13 @@ static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
  * Notes:
  *
  */
-static boolean COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
+static bool COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 {
-    boolean result = FALSE;
+    bool result = false;
 
     if (upper < lower)
     {
-        result =  (lower <= value) || (value <= upper);
+        result = (lower <= value) || (value <= upper);
     }
     else
     {
@@ -965,5 +920,3 @@ static boolean COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 
     return result;
 }
-
-
