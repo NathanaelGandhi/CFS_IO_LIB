@@ -148,24 +148,10 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    // TODO commenting for now because receive and send functions have their own timeout as a param -LM
     /* Set Receive Timeout */
-    // if (config->timeoutRcv != 0)
-    // {
-    //     timeout.tv_sec  = (long)(config->timeoutRcv / 1000);
-    //     timeout.tv_usec = (long)((config->timeoutRcv % 1000) * 1000);
-
-    //     if (setsockopt(udp->sockId, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
-    //     {
-    //         CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
-    //                           "IO_TransUDP Error: Set option SO_RCVTIMEO failed. "
-    //                           "Timeout input:%d",
-    //                           config->timeoutRcv);
-
-    //         return IO_TRANS_UDP_SOCKETOPT_ERROR;
-    //     }
-    // }
-
+    // This is set in this format now because setting socket opts directly is no longer prefered with the osal
+    // implementation. This means that this value just needs to be saved and parsed with the recv function
+    udp->sock_timeout_ms = config->timeoutRcv;
 
     return IO_TRANS_UDP_NO_ERROR;
 }
@@ -274,22 +260,6 @@ int32 IO_TransUdpRcvTimeout(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize, in
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    // FD_ZERO(&fdSet);
-    // FD_SET(udp->sockId, &fdSet);
-
-    // /* Wait on socket for timeout time until some data
-    //  * is available. */
-    // if (selectTimeout == IO_TRANS_PEND_FOREVER)
-    // {
-    //     size = select(udp->sockId + 1, &fdSet, NULL, NULL, NULL);
-    // }
-    // else
-    // {
-    //     timeout.tv_sec  = selectTimeout / 1000000;
-    //     timeout.tv_usec = selectTimeout % 1000000;
-    //     size            = select(udp->sockId + 1, &fdSet, NULL, NULL, &timeout);
-    // }
-
     /* Read the Socket if some data is available. */
     if (bufSize > 0)
     {
@@ -311,7 +281,7 @@ int32 IO_TransUdpRcv(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize)
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
-    msgSize = OS_SocketRecvFrom(udp->sockId, (void *)buffer, (size_t)bufSize, &udp->srcAddr, OS_PEND);
+    msgSize = OS_SocketRecvFrom(udp->sockId, (void *)buffer, (size_t)bufSize, &udp->srcAddr, udp->sock_timeout_ms);
 
     /* Return size of zero if timed out. */
     if (msgSize < 0)

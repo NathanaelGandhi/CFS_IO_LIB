@@ -55,10 +55,11 @@ typedef struct
 /** The Working structure for the UDP */
 typedef struct
 {
-    osal_id_t     sockId;   /**< -- Socket Id                   */
-    OS_SockAddr_t sockAddr; /**< -- Socket Addr (Working)       */
-    OS_SockAddr_t srcAddr;  /**< -- Source Socket Address (In)  */
-    OS_SockAddr_t destAddr; /**< -- Dest. Socket Address (Out)  */
+    int32         sock_timeout_ms; /**< -- Socket Timeout              */
+    osal_id_t     sockId;          /**< -- Socket Id                   */
+    OS_SockAddr_t sockAddr;        /**< -- Socket Addr (Working)       */
+    OS_SockAddr_t srcAddr;         /**< -- Source Socket Address (In)  */
+    OS_SockAddr_t destAddr;        /**< -- Dest. Socket Address (Out)  */
 } IO_TransUdp_t;
 
 /* Prototypes */
