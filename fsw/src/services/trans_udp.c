@@ -84,7 +84,6 @@ int32 IO_TransUdpCreateSocket(IO_TransUdp_t *udp)
 int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
 {
     int32 status = IO_TRANS_UDP_NO_ERROR;
-    // struct timeval timeout;
 
     if (udp == NULL || config == NULL)
     {
@@ -250,8 +249,6 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
  *  Do not use this function if you are using the IO_Trans_Select library. */
 int32 IO_TransUdpRcvTimeout(IO_TransUdp_t *udp, uint8 *buffer, int32 bufSize, int32 selectTimeout)
 {
-    // struct timeval timeout;
-    // fd_set fdSet;
     int32 size = 0;
 
     if (udp == NULL || buffer == NULL)
