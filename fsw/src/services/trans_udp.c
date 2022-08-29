@@ -248,7 +248,7 @@ int32 IO_TransUdpSetDestAddr(IO_TransUdp_t *udp, char *destAddr, uint16 usPort)
     if (status != OS_SUCCESS)
     {
         CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
-                          "IO_TransUDP Error: cant init dest address buffer");
+                          "IO_TransUDP Error: Can't init Dest Address buffer");
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
