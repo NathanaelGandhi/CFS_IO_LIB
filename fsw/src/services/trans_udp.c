@@ -118,7 +118,7 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
     if (status != OS_SUCCESS)
     {
         CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
-                          "IO_TransUDP Error: Cant init Socket Address buffer");
+                          "IO_TransUDP Error: Can't init Socket Address buffer");
         return IO_TRANS_UDP_BAD_INPUT_ERROR;
     }
 
