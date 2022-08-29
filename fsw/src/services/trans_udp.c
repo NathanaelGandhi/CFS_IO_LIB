@@ -166,22 +166,6 @@ int32 IO_TransUdpConfigSocket(IO_TransUdpConfig_t *config, IO_TransUdp_t *udp)
     //     }
     // }
 
-    // /* Set Send Timeout */
-    // if (config->timeoutSnd != 0)
-    // {
-    //     timeout.tv_sec  = (long)(config->timeoutSnd / 1000);
-    //     timeout.tv_usec = (long)((config->timeoutSnd % 1000) * 1000);
-
-    //     if (setsockopt(udp->sockId, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
-    //     {
-    //         CFE_EVS_SendEvent(IO_LIB_TRANS_UDP_EID, CFE_EVS_EventType_ERROR,
-    //                           "IO_TransUDP Error: Set option SO_SNDTIMEO failed. "
-    //                           "Timeout input:%d",
-    //                           config->timeoutSnd);
-
-    //         return IO_TRANS_UDP_SOCKETOPT_ERROR;
-    //     }
-    // }
 
     return IO_TRANS_UDP_NO_ERROR;
 }
