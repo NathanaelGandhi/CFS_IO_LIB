@@ -31,6 +31,10 @@
  */
 
 #include "trans_udp.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*

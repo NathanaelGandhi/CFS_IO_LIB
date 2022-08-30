@@ -23,6 +23,10 @@
  */
 
 #include "tctf.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -115,13 +119,13 @@ uint16 TCTF_GetPayloadLength(TCTF_Hdr_t *tfPtr, TCTF_ChannelService_t *channelSe
  */
 static uint16 TCTF_GetPayloadOffset(TCTF_ChannelService_t *channelService)
 {
-    UT_GenStub_SetupReturnBuffer(TCTF_GetPayloadOffset, static uint16);
+    UT_GenStub_SetupReturnBuffer(TCTF_GetPayloadOffset, uint16);
 
     UT_GenStub_AddParam(TCTF_GetPayloadOffset, TCTF_ChannelService_t *, channelService);
 
     UT_GenStub_Execute(TCTF_GetPayloadOffset, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(TCTF_GetPayloadOffset, static uint16);
+    return UT_GenStub_GetReturnValue(TCTF_GetPayloadOffset, uint16);
 }
 
 /*

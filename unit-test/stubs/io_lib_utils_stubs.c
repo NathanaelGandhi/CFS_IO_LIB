@@ -24,6 +24,10 @@
  */
 
 #include "io_lib_utils.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -60,20 +64,4 @@ int32 IO_LIB_UTIL_PseudoRandomize(uint8 *pBuff, uint16 buffSize, uint8 *pPrSeq)
     UT_GenStub_Execute(IO_LIB_UTIL_PseudoRandomize, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(IO_LIB_UTIL_PseudoRandomize, int32);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for IO_LIB_UTIL_ReverseBits()
- * ----------------------------------------------------
- */
-static uint8 IO_LIB_UTIL_ReverseBits(uint8 byte)
-{
-    UT_GenStub_SetupReturnBuffer(IO_LIB_UTIL_ReverseBits, static uint8);
-
-    UT_GenStub_AddParam(IO_LIB_UTIL_ReverseBits, uint8, byte);
-
-    UT_GenStub_Execute(IO_LIB_UTIL_ReverseBits, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(IO_LIB_UTIL_ReverseBits, static uint8);
 }

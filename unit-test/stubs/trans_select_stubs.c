@@ -31,6 +31,10 @@
  */
 
 #include "trans_select.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -57,7 +61,7 @@ int32 IO_TransSelectAddFd(IO_TransSelect_t *pSet, int32 fd)
  */
 static int32 IO_TransSelectCheckArgs(IO_TransSelect_t *pSet, int32 fd, int32 event)
 {
-    UT_GenStub_SetupReturnBuffer(IO_TransSelectCheckArgs, static int32);
+    UT_GenStub_SetupReturnBuffer(IO_TransSelectCheckArgs, int32);
 
     UT_GenStub_AddParam(IO_TransSelectCheckArgs, IO_TransSelect_t *, pSet);
     UT_GenStub_AddParam(IO_TransSelectCheckArgs, int32, fd);
@@ -65,7 +69,7 @@ static int32 IO_TransSelectCheckArgs(IO_TransSelect_t *pSet, int32 fd, int32 eve
 
     UT_GenStub_Execute(IO_TransSelectCheckArgs, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(IO_TransSelectCheckArgs, static int32);
+    return UT_GenStub_GetReturnValue(IO_TransSelectCheckArgs, int32);
 }
 
 /*
@@ -75,14 +79,14 @@ static int32 IO_TransSelectCheckArgs(IO_TransSelect_t *pSet, int32 fd, int32 eve
  */
 static int32 IO_TransSelectCheckIOArgs(IO_TransSelect_t *pSet, int32 timeoutUSec)
 {
-    UT_GenStub_SetupReturnBuffer(IO_TransSelectCheckIOArgs, static int32);
+    UT_GenStub_SetupReturnBuffer(IO_TransSelectCheckIOArgs, int32);
 
     UT_GenStub_AddParam(IO_TransSelectCheckIOArgs, IO_TransSelect_t *, pSet);
     UT_GenStub_AddParam(IO_TransSelectCheckIOArgs, int32, timeoutUSec);
 
     UT_GenStub_Execute(IO_TransSelectCheckIOArgs, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(IO_TransSelectCheckIOArgs, static int32);
+    return UT_GenStub_GetReturnValue(IO_TransSelectCheckIOArgs, int32);
 }
 
 /*

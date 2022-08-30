@@ -14,7 +14,11 @@
  * Auto-Generated stub implementations for functions defined in io_lib_init header
  */
 
-#include "io_lib_init.h"
+#include "io_lib.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -29,18 +33,4 @@ int32 IO_LibInit(void)
     UT_GenStub_Execute(IO_LibInit, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(IO_LibInit, int32);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for TMTF_LibInit()
- * ----------------------------------------------------
- */
-int32 TMTF_LibInit(void)
-{
-    UT_GenStub_SetupReturnBuffer(TMTF_LibInit, int32);
-
-    UT_GenStub_Execute(TMTF_LibInit, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(TMTF_LibInit, int32);
 }

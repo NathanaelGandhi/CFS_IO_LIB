@@ -20,6 +20,10 @@
  */
 
 #include "tc_sync.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*

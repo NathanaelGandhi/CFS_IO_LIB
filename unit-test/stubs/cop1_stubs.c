@@ -46,6 +46,10 @@
  */
 
 #include "cop1.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -56,7 +60,7 @@
 static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
                            TCTF_ChannelService_t *channelService)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_AcceptTf, static int32);
+    UT_GenStub_SetupReturnBuffer(COP1_AcceptTf, int32);
 
     UT_GenStub_AddParam(COP1_AcceptTf, TCTF_Hdr_t *, tfPtr);
     UT_GenStub_AddParam(COP1_AcceptTf, COP1_Clcw_t *, clcwPtr);
@@ -65,7 +69,7 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
 
     UT_GenStub_Execute(COP1_AcceptTf, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_AcceptTf, static int32);
+    return UT_GenStub_GetReturnValue(COP1_AcceptTf, int32);
 }
 
 /*
@@ -76,7 +80,7 @@ static int32 COP1_AcceptTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
 static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuffer,
                            TCTF_ChannelService_t *channelService)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_BypassTf, static int32);
+    UT_GenStub_SetupReturnBuffer(COP1_BypassTf, int32);
 
     UT_GenStub_AddParam(COP1_BypassTf, TCTF_Hdr_t *, tfPtr);
     UT_GenStub_AddParam(COP1_BypassTf, COP1_Clcw_t *, clcwPtr);
@@ -85,7 +89,7 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
 
     UT_GenStub_Execute(COP1_BypassTf, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_BypassTf, static int32);
+    return UT_GenStub_GetReturnValue(COP1_BypassTf, int32);
 }
 
 /*
@@ -95,14 +99,14 @@ static int32 COP1_BypassTf(TCTF_Hdr_t *tfPtr, COP1_Clcw_t *clcwPtr, uint8 *toBuf
  */
 static uint16 COP1_CheckTfSequence(uint8 seqNum, uint8 expSeqNum)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_CheckTfSequence, static uint16);
+    UT_GenStub_SetupReturnBuffer(COP1_CheckTfSequence, uint16);
 
     UT_GenStub_AddParam(COP1_CheckTfSequence, uint8, seqNum);
     UT_GenStub_AddParam(COP1_CheckTfSequence, uint8, expSeqNum);
 
     UT_GenStub_Execute(COP1_CheckTfSequence, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_CheckTfSequence, static uint16);
+    return UT_GenStub_GetReturnValue(COP1_CheckTfSequence, uint16);
 }
 
 /*
@@ -304,13 +308,13 @@ bool COP1_GetClcwWait(COP1_Clcw_t *clcwPtr)
  */
 static uint16 COP1_GetTfCommand(TCTF_Hdr_t *tfPtr)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_GetTfCommand, static uint16);
+    UT_GenStub_SetupReturnBuffer(COP1_GetTfCommand, uint16);
 
     UT_GenStub_AddParam(COP1_GetTfCommand, TCTF_Hdr_t *, tfPtr);
 
     UT_GenStub_Execute(COP1_GetTfCommand, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_GetTfCommand, static uint16);
+    return UT_GenStub_GetReturnValue(COP1_GetTfCommand, uint16);
 }
 
 /*
@@ -320,13 +324,13 @@ static uint16 COP1_GetTfCommand(TCTF_Hdr_t *tfPtr)
  */
 static uint8 COP1_GetTfCommandedVr(TCTF_Hdr_t *tfPtr)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_GetTfCommandedVr, static uint8);
+    UT_GenStub_SetupReturnBuffer(COP1_GetTfCommandedVr, uint8);
 
     UT_GenStub_AddParam(COP1_GetTfCommandedVr, TCTF_Hdr_t *, tfPtr);
 
     UT_GenStub_Execute(COP1_GetTfCommandedVr, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_GetTfCommandedVr, static uint8);
+    return UT_GenStub_GetReturnValue(COP1_GetTfCommandedVr, uint8);
 }
 
 /*
@@ -411,7 +415,7 @@ void COP1_SetClcwStatus(COP1_Clcw_t *clcwPtr, uint16 value)
  */
 static bool COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 {
-    UT_GenStub_SetupReturnBuffer(COP1_isInWrappedRange, static bool);
+    UT_GenStub_SetupReturnBuffer(COP1_isInWrappedRange, bool);
 
     UT_GenStub_AddParam(COP1_isInWrappedRange, uint8, lower);
     UT_GenStub_AddParam(COP1_isInWrappedRange, uint8, value);
@@ -419,5 +423,5 @@ static bool COP1_isInWrappedRange(uint8 lower, uint8 value, uint8 upper)
 
     UT_GenStub_Execute(COP1_isInWrappedRange, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(COP1_isInWrappedRange, static bool);
+    return UT_GenStub_GetReturnValue(COP1_isInWrappedRange, bool);
 }

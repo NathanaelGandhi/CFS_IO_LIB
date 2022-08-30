@@ -24,6 +24,10 @@
  */
 
 #include "tm_sdlp.h"
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 #include "utgenstub.h"
 
 /*
@@ -33,7 +37,7 @@
  */
 static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint16 dataLength, bool isPacket)
 {
-    UT_GenStub_SetupReturnBuffer(TM_SDLP_AddData, static int32);
+    UT_GenStub_SetupReturnBuffer(TM_SDLP_AddData, int32);
 
     UT_GenStub_AddParam(TM_SDLP_AddData, TM_SDLP_FrameInfo_t *, pFrameInfo);
     UT_GenStub_AddParam(TM_SDLP_AddData, uint8 *, pData);
@@ -42,7 +46,7 @@ static int32 TM_SDLP_AddData(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pData, uint
 
     UT_GenStub_Execute(TM_SDLP_AddData, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(TM_SDLP_AddData, static int32);
+    return UT_GenStub_GetReturnValue(TM_SDLP_AddData, int32);
 }
 
 /*
@@ -122,13 +126,13 @@ int32 TM_SDLP_CompleteFrame(TM_SDLP_FrameInfo_t *pFrameInfo, uint8 *pMcFrameCnt,
  */
 static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
 {
-    UT_GenStub_SetupReturnBuffer(TM_SDLP_CopyFromOverflow, static int32);
+    UT_GenStub_SetupReturnBuffer(TM_SDLP_CopyFromOverflow, int32);
 
     UT_GenStub_AddParam(TM_SDLP_CopyFromOverflow, TM_SDLP_FrameInfo_t *, pFrameInfo);
 
     UT_GenStub_Execute(TM_SDLP_CopyFromOverflow, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(TM_SDLP_CopyFromOverflow, static int32);
+    return UT_GenStub_GetReturnValue(TM_SDLP_CopyFromOverflow, int32);
 }
 
 /*
@@ -138,7 +142,7 @@ static int32 TM_SDLP_CopyFromOverflow(TM_SDLP_FrameInfo_t *pFrameInfo)
  */
 static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *data, uint16 length, bool isPartial)
 {
-    UT_GenStub_SetupReturnBuffer(TM_SDLP_CopyToOverflow, static int32);
+    UT_GenStub_SetupReturnBuffer(TM_SDLP_CopyToOverflow, int32);
 
     UT_GenStub_AddParam(TM_SDLP_CopyToOverflow, TM_SDLP_OverflowInfo_t *, pOverflow);
     UT_GenStub_AddParam(TM_SDLP_CopyToOverflow, uint8 *, data);
@@ -147,7 +151,7 @@ static int32 TM_SDLP_CopyToOverflow(TM_SDLP_OverflowInfo_t *pOverflow, uint8 *da
 
     UT_GenStub_Execute(TM_SDLP_CopyToOverflow, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(TM_SDLP_CopyToOverflow, static int32);
+    return UT_GenStub_GetReturnValue(TM_SDLP_CopyToOverflow, int32);
 }
 
 /*
